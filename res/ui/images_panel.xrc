@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource>
+    <object class="wxPanel" name="images_panel">
+        <object class="wxGridBagSizer">
+            <rows>2</rows>
+            <cols>2</cols>
+            <growablerows>0</growablerows>
+            <vgap>5</vgap>
+            <hgap>5</hgap>
+            
+            <object class="sizeritem">
+                <object class="wxListCtrl" name="images_list">
+                    <style>wxLC_REPORT|wxLC_SMALL_ICON|wxLC_SINGLE_SEL</style>
+                </object>
+                <cellpos>0, 0</cellpos>
+                <cellspan>1, 2</cellspan>
+                <flag>wxEXPAND</flag>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxButton" name="load_btn">
+                    <style>wxBU_NOTEXT|wxBU_EXACTFIT</style>
+                </object>
+                <cellpos>1, 0</cellpos>
+                <flag>wxALL|wxLEFT</flag>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxButton" name="delete_all_btn">
+                    <style>wxBU_NOTEXT|wxBU_EXACTFIT</style>
+                </object>
+                <cellpos>1, 1</cellpos>
+                <flag>wxALL|wxALIGN_RIGHT</flag>
+            </object>
+
+        </object>
+    </object>
+</resource>

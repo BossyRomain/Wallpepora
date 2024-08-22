@@ -21,4 +21,4 @@ list(REMOVE_ITEM SRC_FILES ${CMAKE_SOURCE_DIR}/src/main.cpp)
 file(GLOB_RECURSE TESTS_SRC_FILES ${CMAKE_SOURCE_DIR}/tests/*.cpp)
 
 add_executable(wallpeporaTests ${SRC_FILES} ${TESTS_SRC_FILES})
-target_link_libraries(wallpeporaTests gtest gtest_main ${OpenCV_LIBS})
+target_link_libraries(wallpeporaTests gtest gtest_main ${OpenCV_LIBS} ${wxWidgets_LIBRARIES})
