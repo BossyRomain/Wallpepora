@@ -2,6 +2,7 @@
 #define CLI_HPP
 
 #include "controllers/images_controller.hpp"
+#include "controllers/grid_controller.hpp"
 #include "cli/commands/command.hpp"
 
 class Command;
@@ -21,8 +22,12 @@ public:
     // Getters
     ImagesController* getImagesController() const;
 
+    GridController* getGridController() const;
+
     // Setters
     void setImagesController(ImagesController *p_imagesController);
+
+    void setGridController(GridController *p_gridController);
 
     // Instance's methods
     /**
@@ -36,6 +41,8 @@ public:
 private:
 
     ImagesController *m_imagesController;
+
+    GridController *m_gridController;
 };
 
 #endif

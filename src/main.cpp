@@ -1,7 +1,10 @@
 #include "controllers/images_controller.hpp"
+#include "controllers/grid_controller.hpp"
 #include "cli/cli.hpp"
 #include "gui/main_frame.hpp"
 #include "gui/images_panel.hpp"
+#include "gui/grid_params_panel.hpp"
+#include "gui/grid_editor_panel.hpp"
 #include <iostream>
 #include <wx/wx.h>
 #include <wx/xrc/xmlres.h>
@@ -13,20 +16,24 @@
 class App: public wxApp {
 public:
 
-    App(ImagesController *p_imagesController);
+    App(ImagesController *p_imagesController, GridController *p_gridController);
 
     bool OnInit() override;
 
 private:
 
     ImagesController *m_imagesController;
+
+    GridController *m_gridController;
 };
 
-App::App(ImagesController *p_imagesController): m_imagesController(p_imagesController) {
+App::App(ImagesController *p_imagesController, GridController *p_gridController): 
+m_imagesController(p_imagesController), m_gridController(p_gridController) {
 }
 
 bool App::OnInit() {
     assert(m_imagesController != nullptr);
+    assert(m_gridController != nullptr);
 
     wxXmlResource::Get()->InitAllHandlers();
     wxXmlResource::Get()->LoadAllFiles("./res/ui/");
@@ -36,8 +43,19 @@ bool App::OnInit() {
     ImagesPanel *p_imagesPanel = new ImagesPanel(p_mainFrame);
     p_imagesPanel->setImagesController(m_imagesController);
 
+    GridEditorPanel *p_gridEditorPanel = new GridEditorPanel(p_mainFrame);
+    p_gridEditorPanel->setGridController(m_gridController);
+
+    GridParamsPanel *p_gridParamsPanel = new GridParamsPanel(p_mainFrame);
+    p_gridParamsPanel->setGridController(m_gridController);
+    p_gridParamsPanel->setGridEditorPanel(p_gridEditorPanel);    
+
     wxGridBagSizer *sizer = (wxGridBagSizer*) p_mainFrame->GetSizer();
+    sizer->Add(p_gridParamsPanel, wxGBPosition(0, 0), wxDefaultSpan, wxEXPAND);
+    sizer->Add(p_gridEditorPanel, wxGBPosition(0, 1), wxDefaultSpan, wxEXPAND);
     sizer->Add(p_imagesPanel, wxGBPosition(0, 2), wxDefaultSpan, wxEXPAND);
+
+    sizer->AddGrowableCol(1, 5);
 
     p_mainFrame->Show(true);
 
@@ -46,6 +64,7 @@ bool App::OnInit() {
 
 int main(int argc, char* argv[]) {
     ImagesController *p_imagesController = new ImagesController();
+    GridController *p_gridController = new GridController();
 
     bool cli = false;
     if(argc == 2) {
@@ -58,10 +77,11 @@ int main(int argc, char* argv[]) {
         CLI cli;
 
         cli.setImagesController(p_imagesController);
+        cli.setGridController(p_gridController);
         cli.run();
     } else {
         // Launching the application with the gui
-        wxApp::SetInstance(new App(p_imagesController));
+        wxApp::SetInstance(new App(p_imagesController, p_gridController));
         wxEntryStart(argc, argv);
 
         // Check if wxApp initialized successfully
@@ -82,4 +102,5 @@ int main(int argc, char* argv[]) {
     }
 
     delete p_imagesController;
+    delete p_gridController;
 }

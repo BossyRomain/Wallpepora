@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource>
+    <object class="wxPanel" name="grid_params_panel">
+        <object class="wxGridBagSizer">
+            <rows>3</rows>
+            <cols>2</cols>
+            <vgap>5</vgap>
+            <hgap>5</hgap>
+            
+            <object class="sizeritem">
+                <object class="wxStaticText">
+                    <style>wxALIGN_LEFT</style>
+                    <label>Rows : </label>
+                </object>
+                <cellpos>0, 0</cellpos>
+                <flag>wxEXPAND|wxALIGN_CENTER_VERTICAL</flag>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxStaticText">
+                    <style>wxALIGN_LEFT</style>
+                    <label>Cols : </label>
+                </object>
+                <cellpos>1, 0</cellpos>
+                <flag>wxEXPAND|wxALIGN_CENTER_VERTICAL</flag>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxStaticText">
+                    <style>wxALIGN_LEFT</style>
+                    <label>Cells size : </label>
+                </object>
+                <cellpos>2, 0</cellpos>
+                <flag>wxEXPAND|wxALIGN_CENTER_VERTICAL</flag>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxSpinCtrl" name="rows_spinner">
+                    <style>wxSP_HORIZONTAL|wxSP_ARROW_KEYS</style>
+                    <value>1</value>
+                    <min>1</min>
+                    <max>9999</max>
+                </object>
+                <cellpos>0, 1</cellpos>
+                <flag>wxEXPAND</flag>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxSpinCtrl" name="cols_spinner">
+                    <style>wxSP_HORIZONTAL|wxSP_ARROW_KEYS</style>
+                    <value>1</value>
+                    <min>1</min>
+                    <max>9999</max>
+                </object>
+                <cellpos>1, 1</cellpos>
+                <flag>wxEXPAND</flag>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxSpinCtrl" name="size_spinner">
+                    <style>wxSP_HORIZONTAL|wxSP_ARROW_KEYS</style>
+                    <value>35</value>
+                    <min>20</min>
+                    <max>9999</max>
+                </object>
+                <cellpos>2, 1</cellpos>
+                <flag>wxEXPAND</flag>
+            </object>
+
+        </object>
+    </object>
+</resource>

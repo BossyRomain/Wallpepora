@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource>
+    <object class="wxPanel" name="grid_editor_panel">
+        <object class="wxGridSizer">
+            <rows>1</rows>
+            <cols>1</cols>
+        </object>
+    </object>
+</resource>

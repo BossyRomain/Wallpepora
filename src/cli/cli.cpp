@@ -3,6 +3,7 @@
 #include "cli/commands/load_command.hpp"
 #include "cli/commands/delete_command.hpp"
 #include "cli/commands/show_command.hpp"
+#include "cli/commands/set_command.hpp"
 #include <iostream>
 #include <vector>
 #include <filesystem>
@@ -13,6 +14,7 @@ enum Commands {
     EXIT,
     LOAD,
     DELETE,
+    SET,
     SHOW
 };
 
@@ -34,6 +36,8 @@ Commands extractCommand(const std::string& line) {
         return DELETE;
     } else if(cmd == "show") {
         return SHOW;
+    } else if(cmd == "set") {
+        return SET;
     }
 
     return NONE;
@@ -71,7 +75,7 @@ std::vector<std::string> extractsArgs(const std::string& line) {
 }
 
 // Constructors
-CLI::CLI(): m_imagesController(nullptr) {
+CLI::CLI(): m_imagesController(nullptr), m_gridController(nullptr) {
 }
 
 // Destructor
@@ -83,14 +87,23 @@ ImagesController* CLI::getImagesController() const {
     return m_imagesController;
 }
 
+GridController* CLI::getGridController() const {
+    return m_gridController;
+}
+
 // Setters
 void CLI::setImagesController(ImagesController *p_imagesController) {
     m_imagesController = p_imagesController;
 }
 
+void CLI::setGridController(GridController *p_gridController) {
+    m_gridController = p_gridController;
+}
+
 // Instance's methods
 int CLI::run() {
     assert(m_imagesController != nullptr);
+    assert(m_gridController != nullptr);
 
     bool run = true;
     while(run) {
@@ -127,6 +140,10 @@ int CLI::run() {
 
         case SHOW:
             p_cmd = new ShowCmd(args);
+            break;
+
+        case SET:
+            p_cmd = new SetCmd(args);
             break;
 
         default:
