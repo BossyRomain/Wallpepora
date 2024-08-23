@@ -1,9 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resource>
     <object class="wxPanel" name="grid_editor_panel">
-        <object class="wxGridSizer">
-            <rows>1</rows>
+        <object class="wxGridBagSizer">
+            <rows>2</rows>
             <cols>1</cols>
+            <vgap>10</vgap>
+            
+            <object class="sizeritem">
+                <object class="wxBoxSizer">
+                    <orient>wxHORIZONTAL</orient>
+
+                    <object class="sizeritem">
+                        <object class="wxButton" name="merge_btn">
+                            <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
+                        </object>
+                    </object>
+
+                    <object class="sizeritem">
+                        <object class="wxButton" name="unmerge_btn">
+                            <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
+                        </object>
+                    </object>
+
+                </object>
+                <cellpos>0, 0</cellpos>
+            </object>
         </object>
     </object>
 </resource>

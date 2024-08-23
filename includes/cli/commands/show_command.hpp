@@ -23,6 +23,12 @@ public:
 
 private:
 
+    // Instance's methods
+    void showImages(CLI *p_cli);
+
+    void showTiles(CLI *p_cli);
+
+    // Attributes
     std::vector<std::string> m_args;
 };
 

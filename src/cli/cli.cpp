@@ -4,6 +4,8 @@
 #include "cli/commands/delete_command.hpp"
 #include "cli/commands/show_command.hpp"
 #include "cli/commands/set_command.hpp"
+#include "cli/commands/merge_command.hpp"
+#include "cli/commands/unmerge_command.hpp"
 #include <iostream>
 #include <vector>
 #include <filesystem>
@@ -15,6 +17,8 @@ enum Commands {
     LOAD,
     DELETE,
     SET,
+    MERGE,
+    UNMERGE,
     SHOW
 };
 
@@ -38,6 +42,10 @@ Commands extractCommand(const std::string& line) {
         return SHOW;
     } else if(cmd == "set") {
         return SET;
+    } else if(cmd == "merge") {
+        return MERGE;
+    } else if(cmd == "unmerge") {
+        return UNMERGE;
     }
 
     return NONE;
@@ -145,6 +153,26 @@ int CLI::run() {
         case SET:
             p_cmd = new SetCmd(args);
             break;
+
+        case MERGE:
+            try {
+                p_cmd = new MergeCmd(
+                    std::stoi(args[0]),
+                    std::stoi(args[1]),
+                    std::stoi(args[2]),
+                    std::stoi(args[3])
+                );
+            } catch(...) {
+                std::cout << "invalid command" << std::endl;
+            }
+            break;
+        
+        case UNMERGE:
+            try {
+                p_cmd = new UnmergeCmd(std::stoi(args[0]));
+            } catch(...) {
+                std::cout << "invalid command" << std::endl;
+            }
 
         default:
             break;

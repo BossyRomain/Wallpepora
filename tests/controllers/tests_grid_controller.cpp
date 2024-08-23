@@ -51,3 +51,91 @@ TEST(TestsGridController, TestsCellsSizeUpdate) {
     ASSERT_FALSE(controller.setCellsSize(19));
     ASSERT_EQ(controller.getCellsSize(), 78);
 }
+
+/**
+ * Checks :
+ * - tiles are cutted or deleted if needed when updating the number of rows of the grid
+ */
+TEST(TestsGridController, TestsTilesRowsUpdate) {
+    GridController controller;
+
+    int id = controller.merge(0, 0, 2, 2);
+    controller.setRowsCount(1);
+
+    const Tile *p_tile = controller.getTile(id);
+    ASSERT_EQ(p_tile->getRowMax(), 0);
+    ASSERT_EQ(p_tile->getHeight(), 1);
+    ASSERT_EQ(p_tile->getColMax(), 2);
+    ASSERT_EQ(p_tile->getWitdh(), 3);
+
+    controller.unmerge(id);
+    controller.setRowsCount(10);
+    id = controller.merge(8, 8, 9, 9);
+    ASSERT_TRUE(controller.getTile(id) != nullptr);
+
+    controller.setRowsCount(5);
+    ASSERT_TRUE(controller.getTile(id) == nullptr);
+}
+
+/**
+ * Checks :
+ * - tiles are cutted or deleted if needed when updating the number of columns of the grid
+ */
+TEST(TestsGridController, TestsTilesColsUpdate) {
+    GridController controller;
+
+    int id = controller.merge(0, 0, 2, 2);
+    controller.setColsCount(1);
+
+    const Tile *p_tile = controller.getTileAt(0, 0);
+    ASSERT_EQ(p_tile->getColMax(), 0);
+    ASSERT_EQ(p_tile->getWitdh(), 1);
+    ASSERT_EQ(p_tile->getRowMax(), 2);
+    ASSERT_EQ(p_tile->getHeight(), 3);
+
+    controller.unmerge(id);
+    controller.setColsCount(10);
+    id = controller.merge(8, 8, 9, 9);
+    ASSERT_TRUE(controller.getTile(id) != nullptr);
+
+    controller.setColsCount(5);
+    ASSERT_TRUE(controller.getTile(id) == nullptr);
+}
+
+/**
+ * Checks :
+ * - case when it is possible to merge cells into tile
+ * - case when it is impossible to merge cells into tile
+ */
+TEST(TestsGridController, TestsCellsMerging) {
+    GridController controller;
+
+    int id = controller.merge(0, 0, 2, 2);
+    ASSERT_NE(id, -1);
+
+    id = controller.merge(0, 0, 2, 1);
+    ASSERT_EQ(id, -1);
+}
+
+/**
+ * Checks :
+ * - case when it is possible to unmerge tiles
+ * - case when it is impossible to unmerge tiles
+ */
+TEST(TestsGridController, TestsCellsUnmerging) {
+    GridController controller;
+
+    int id = controller.merge(0, 0, 2, 2);
+    
+    try {
+        controller.unmerge(id);
+    } catch(std::out_of_range& e) {
+        FAIL();
+    }
+
+    try {
+        controller.unmerge(id);
+        FAIL();
+    } catch(std::out_of_range& e) {
+    }
+}

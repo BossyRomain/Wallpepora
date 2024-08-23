@@ -37,6 +37,7 @@ bool App::OnInit() {
 
     wxXmlResource::Get()->InitAllHandlers();
     wxXmlResource::Get()->LoadAllFiles("./res/ui/");
+    wxXmlResource::Get()->LoadAllFiles("./res/icons/");
 
     MainFrame *p_mainFrame = new MainFrame();
 
