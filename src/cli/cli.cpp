@@ -8,6 +8,8 @@
 #include "cli/commands/unmerge_command.hpp"
 #include "cli/commands/place_command.hpp"
 #include "cli/commands/remove_command.hpp"
+#include "cli/commands/generate_command.hpp"
+#include "cli/commands/export_command.hpp"
 #include <iostream>
 #include <vector>
 #include <filesystem>
@@ -23,6 +25,8 @@ enum Commands {
     UNMERGE,
     PLACE,
     REMOVE,
+    GENERATE,
+    EXPORT,
     SHOW
 };
 
@@ -54,6 +58,10 @@ Commands extractCommand(const std::string& line) {
         return PLACE;
     } else if(cmd == "remove") {
         return REMOVE;
+    } else if(cmd == "generate") {
+        return GENERATE;
+    } else if(cmd == "export") {
+        return EXPORT;
     }
 
     return NONE;
@@ -91,7 +99,7 @@ std::vector<std::string> extractsArgs(const std::string& line) {
 }
 
 // Constructors
-CLI::CLI(): m_imagesController(nullptr), m_gridController(nullptr) {
+CLI::CLI(): m_imagesController(nullptr), m_gridController(nullptr), m_wallpapersController(nullptr) {
 }
 
 // Destructor
@@ -107,6 +115,14 @@ GridController* CLI::getGridController() const {
     return m_gridController;
 }
 
+WallpapersController* CLI::getWallpapersController() const {
+    return m_wallpapersController;
+}
+
+void CLI::setWallpapersController(WallpapersController *p_wallpapersController) {
+    m_wallpapersController = p_wallpapersController;
+}
+
 // Setters
 void CLI::setImagesController(ImagesController *p_imagesController) {
     m_imagesController = p_imagesController;
@@ -120,6 +136,7 @@ void CLI::setGridController(GridController *p_gridController) {
 int CLI::run() {
     assert(m_imagesController != nullptr);
     assert(m_gridController != nullptr);
+    assert(m_wallpapersController != nullptr);
 
     bool run = true;
     while(run) {
@@ -203,6 +220,22 @@ int CLI::run() {
                     p_cmd = new RemoveCmd(std::stoi(args[0]));
                 } else if(args.size() == 2) {
                     p_cmd = new RemoveCmd(std::stoi(args[0]), std::stoi(args[1]));
+                } else {
+                    throw std::exception();
+                }
+            } catch(...) {
+                std::cout << "invalid command" << std::endl;
+            }
+            break;
+
+        case GENERATE:
+            p_cmd = new GenerateCmd();
+            break;
+
+        case EXPORT:
+            try {
+                if(args.size() == 2) {
+                    p_cmd = new ExportCmd(std::stoi(args[0]), args[1]);
                 } else {
                     throw std::exception();
                 }

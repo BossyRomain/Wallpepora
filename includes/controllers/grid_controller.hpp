@@ -3,6 +3,7 @@
 
 #include "model/tiles.hpp"
 #include "model/images.hpp"
+#include "controllers/wallpapers_controller.hpp"
 #include <vector>
 
 /**
@@ -18,6 +19,8 @@ public:
     ~GridController();
 
     // Getters
+    WallpapersController* getWallpapersController() const;
+
     int getRowsCount() const;
 
     int getColsCount() const;
@@ -50,7 +53,16 @@ public:
      */
     std::vector<Tile> getTiles() const;
 
+    /**
+     * Returns true if every cell or every tiles on the grid contains an image.
+     * 
+     * @returns returns true if every cell or every tiles on the grid contains an image, else false.
+     */
+    bool isComplete() const;
+
     // Setters
+    void setWallpapersController(WallpapersController *p_wallpapersController);
+
     /**
      * Set the grid's number of rows.
      * 
@@ -114,12 +126,21 @@ public:
      */
     void placeImage(int id, Image *p_image);
 
+    /**
+     * Generates a new wallpapers if possible.
+     * 
+     * @return true if a new wallpaper has been generated, else false.
+     */
+    bool generate();
+
 private:
 
     // Instance's methods
     int addNewTile(int rowMin, int colMin, int rowMax, int colMax);
 
     // Attributes
+    WallpapersController *m_wallpapersController;
+
     int m_rows;
 
     int m_cols;

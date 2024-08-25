@@ -2,8 +2,10 @@
 <resource>
     <object class="wxPanel" name="grid_editor_panel">
         <object class="wxGridBagSizer">
-            <rows>2</rows>
+            <rows>3</rows>
             <cols>1</cols>
+            <growablerows>1</growablerows>
+            <growablecols>0</growablecols>
             <vgap>10</vgap>
             
             <object class="sizeritem">
@@ -25,6 +27,14 @@
                 </object>
                 <cellpos>0, 0</cellpos>
             </object>
+
+            <object class="sizeritem">
+                <object class="wxButton" name="generate_btn">
+                    <label>Generate</label>
+                </object>
+                <cellpos>2, 0</cellpos>
+            </object>
+
         </object>
     </object>
 </resource>

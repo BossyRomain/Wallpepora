@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource>
+    <object class="wxPanel" name="wallpapers_panel">
+        <object class="wxGridBagSizer">
+            <rows>2</rows>
+            <cols>2</cols>
+            <growablerows>0</growablerows>
+            <vgap>5</vgap>
+            <hgap>5</hgap>
+            
+            <object class="sizeritem">
+                <object class="wxListCtrl" name="wallpapers_list">
+                    <style>wxLC_REPORT|wxLC_SMALL_ICON|wxLC_SINGLE_SEL</style>
+                </object>
+                <cellpos>0, 0</cellpos>
+                <flag>wxEXPAND</flag>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxButton" name="export_btn">
+                    <label>export</label>
+                </object>
+                <cellpos>1, 0</cellpos>
+                <flag>wxALL|wxLEFT</flag>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxStaticBitmap" name="wallpaper_display">
+                </object>
+                <cellpos>0, 1</cellpos>
+                <cellspan>2, 1</cellspan>
+                <flag>wxALL|wxEXPAND</flag>
+            </object>
+
+        </object>
+    </object>
+</resource>

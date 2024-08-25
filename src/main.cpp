@@ -1,10 +1,12 @@
 #include "controllers/images_controller.hpp"
 #include "controllers/grid_controller.hpp"
+#include "controllers/wallpapers_controller.hpp"
 #include "cli/cli.hpp"
 #include "gui/main_frame.hpp"
 #include "gui/images_panel.hpp"
 #include "gui/grid_params_panel.hpp"
 #include "gui/grid_editor_panel.hpp"
+#include "gui/wallpapers_panel.hpp"
 #include <iostream>
 #include <wx/wx.h>
 #include <wx/xrc/xmlres.h>
@@ -16,7 +18,7 @@
 class App: public wxApp {
 public:
 
-    App(ImagesController *p_imagesController, GridController *p_gridController);
+    App(ImagesController *p_imagesController, GridController *p_gridController, WallpapersController *p_wallpapersController);
 
     bool OnInit() override;
 
@@ -25,10 +27,12 @@ private:
     ImagesController *m_imagesController;
 
     GridController *m_gridController;
+
+    WallpapersController *m_wallpapersController;
 };
 
-App::App(ImagesController *p_imagesController, GridController *p_gridController): 
-m_imagesController(p_imagesController), m_gridController(p_gridController) {
+App::App(ImagesController *p_imagesController, GridController *p_gridController, WallpapersController *p_wallpapersController): 
+m_imagesController(p_imagesController), m_gridController(p_gridController), m_wallpapersController(p_wallpapersController) {
 }
 
 bool App::OnInit() {
@@ -40,25 +44,24 @@ bool App::OnInit() {
     wxXmlResource::Get()->LoadAllFiles("./res/icons/");
 
     MainFrame *p_mainFrame = new MainFrame();
+    wxPanel *p_gridPanel = XRCCTRL(*p_mainFrame, "grid_page", wxPanel);
+    wxPanel *p_wallpapersPage = XRCCTRL(*p_mainFrame, "wallpapers_page", wxPanel);
 
-    ImagesPanel *p_imagesPanel = new ImagesPanel(p_mainFrame);
+    ImagesPanel *p_imagesPanel = new ImagesPanel(p_gridPanel);
     p_imagesPanel->setImagesController(m_imagesController);
 
-    GridEditorPanel *p_gridEditorPanel = new GridEditorPanel(p_mainFrame);
+    GridEditorPanel *p_gridEditorPanel = new GridEditorPanel(p_gridPanel);
     p_gridEditorPanel->setGridController(m_gridController);
     p_gridEditorPanel->setImagesController(m_imagesController);
 
-    GridParamsPanel *p_gridParamsPanel = new GridParamsPanel(p_mainFrame);
+    GridParamsPanel *p_gridParamsPanel = new GridParamsPanel(p_gridPanel);
     p_gridParamsPanel->setGridController(m_gridController);
-    p_gridParamsPanel->setGridEditorPanel(p_gridEditorPanel);    
+    p_gridParamsPanel->setGridEditorPanel(p_gridEditorPanel);
 
-    wxGridBagSizer *sizer = (wxGridBagSizer*) p_mainFrame->GetSizer();
-    sizer->Add(p_gridParamsPanel, wxGBPosition(0, 0), wxDefaultSpan, wxEXPAND);
-    sizer->Add(p_gridEditorPanel, wxGBPosition(0, 1), wxDefaultSpan, wxEXPAND);
-    sizer->Add(p_imagesPanel, wxGBPosition(0, 2), wxDefaultSpan, wxEXPAND);
+    WallpapersPanel *p_wallpapersPanel = new WallpapersPanel(p_wallpapersPage);
+    p_wallpapersPanel->setWallpapersController(m_wallpapersController);
 
-    sizer->AddGrowableCol(1, 5);
-
+    p_mainFrame->init(p_imagesPanel, p_gridParamsPanel, p_gridEditorPanel, p_wallpapersPanel);    
     p_mainFrame->Show(true);
 
     return true;
@@ -67,6 +70,9 @@ bool App::OnInit() {
 int main(int argc, char* argv[]) {
     ImagesController *p_imagesController = new ImagesController();
     GridController *p_gridController = new GridController();
+    WallpapersController *p_wallpapersController = new WallpapersController();
+
+    p_gridController->setWallpapersController(p_wallpapersController);
 
     bool cli = false;
     if(argc == 2) {
@@ -80,10 +86,11 @@ int main(int argc, char* argv[]) {
 
         cli.setImagesController(p_imagesController);
         cli.setGridController(p_gridController);
+        cli.setWallpapersController(p_wallpapersController);
         cli.run();
     } else {
         // Launching the application with the gui
-        wxApp::SetInstance(new App(p_imagesController, p_gridController));
+        wxApp::SetInstance(new App(p_imagesController, p_gridController, p_wallpapersController));
         wxEntryStart(argc, argv);
 
         // Check if wxApp initialized successfully
@@ -105,4 +112,5 @@ int main(int argc, char* argv[]) {
 
     delete p_imagesController;
     delete p_gridController;
+    delete p_wallpapersController;
 }

@@ -67,7 +67,7 @@ void SetCmd::updateRows(GridController *p_gridController, int rows) const {
 }
 
 void SetCmd::updateCols(GridController *p_gridController, int cols) const {
-    if(p_gridController->setRowsCount(cols)) {
+    if(p_gridController->setColsCount(cols)) {
         std::cout << "grid's number of columns updated" << std::endl;
     } else {
         std::cout << "error while updating grid's number of columns" << std::endl;

@@ -71,6 +71,11 @@ private:
      * Invoked when the user clicks on the button to unmerge a tile.
      */
     void unmerge(wxCommandEvent& event);
+
+    /**
+     * Invoked when the user clicks on the button to generate a new wallpaper.
+     */
+    void generate(wxCommandEvent& event);
     
     // Attributes
     GridController *m_gridController;

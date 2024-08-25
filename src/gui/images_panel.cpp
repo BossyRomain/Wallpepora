@@ -1,4 +1,5 @@
 #include "gui/images_panel.hpp"
+#include "gui/gui_utils.hpp"
 #include <wx/xrc/xh_all.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/filedlg.h>
@@ -9,51 +10,6 @@
 #include <iostream>
 
 #define THUMBNAIL_SIZE 300
-
-// Helpers functions
-/**
- * Create the thumbnail for an image for the images list of the panel.
- * 
- * @param originalImg data of an image
- * @returns the bitmap of the image thumbnail.
- */
-wxBitmap createThumbnail(cv::Mat originalImg) {
-    int width = originalImg.size().width;
-    int height = originalImg.size().height;
-    double ratio = (double) width / height;
-    ratio = std::round(ratio * 100.0) / 100.0;
-
-    // Determines the image dimensions needed to fit in the thumbnail
-    if(ratio > 1.0) {
-        // width > height
-        width = THUMBNAIL_SIZE;
-        height = (int) (width / ratio);
-    } else {
-        // width <= height
-        height = THUMBNAIL_SIZE;
-        width = (int) (ratio * height);
-    }
-
-    cv::Mat resizedImg;
-    cv::resize(originalImg, resizedImg, cv::Size(width, height));
-
-    // Add white background for the thumbnail
-    int offsetX = (THUMBNAIL_SIZE - width) / 2;
-    int offsetY = (THUMBNAIL_SIZE - height) / 2;
-    cv::Mat thumbnail(cv::Size(THUMBNAIL_SIZE, THUMBNAIL_SIZE), CV_8UC3, cv::Scalar(255, 255, 255));
-    for(int y = 0; y < height; y++) {
-        for(int x = 0; x < width; x++) {
-            cv::Vec3b pixel = resizedImg.at<cv::Vec3b>(y, x);
-            thumbnail.at<cv::Vec3b>(y + offsetY, x + offsetX) = pixel;
-        }
-    }
-
-    cv::Mat converted;
-    cv::cvtColor(thumbnail, converted, cv::COLOR_BGR2RGB);
-
-    wxImage image(converted.cols, converted.rows, converted.data, true);
-    return wxBitmap(image);
-}
 
 // Constructors
 ImagesPanel::ImagesPanel(wxWindow *p_parent): m_imagesController(nullptr), m_selectedImage(-1) {
@@ -69,10 +25,10 @@ ImagesPanel::ImagesPanel(wxWindow *p_parent): m_imagesController(nullptr), m_sel
     p_deleteAllBtn->SetBackgroundColour(*wxRED);
     p_deleteAllBtn->SetBitmap(wxBitmap("./res/icons/trash.png"));
 
-    m_imagesList = new wxImageList(300, 300);
+    m_imagesList = new wxImageList(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
     m_listCtrl = XRCCTRL(*this, "images_list", wxListCtrl);
 
-    m_listCtrl->InsertColumn(0, "", wxLIST_FORMAT_LEFT, 300);
+    m_listCtrl->InsertColumn(0, "", wxLIST_FORMAT_LEFT, THUMBNAIL_SIZE);
     m_listCtrl->AssignImageList(m_imagesList, wxIMAGE_LIST_SMALL);
 
     m_listCtrl->Bind(wxEVT_LIST_ITEM_SELECTED, &ImagesPanel::onImageSelected, this);
@@ -104,7 +60,7 @@ void ImagesPanel::setImagesController(ImagesController *p_imagesController) {
 void ImagesPanel::onImageLoaded(Image *p_image) {
     cv::Mat data = p_image->getData();
 
-    wxBitmap bmp(createThumbnail(data));
+    wxBitmap bmp = createThumbnail(data, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
     long imgId = m_imagesList->Add(bmp);
     m_listCtrl->InsertItem(m_listCtrl->GetItemCount(), wxString(std::to_string(p_image->getId())), imgId);
 }

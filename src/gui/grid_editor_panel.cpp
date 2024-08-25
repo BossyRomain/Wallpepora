@@ -64,13 +64,11 @@ GridEditorPanel::GridEditorPanel(wxWindow *p_parent): m_gridController(nullptr),
     m_paintArea = new PaintArea(p_scrolledWindow);
     wxButton *mergeBtn = XRCCTRL(*this, "merge_btn", wxButton);
     wxButton *unmergeBtn = XRCCTRL(*this, "unmerge_btn", wxButton);
+    wxButton *generateBtn = XRCCTRL(*this, "generate_btn", wxButton);
 
     wxGridBagSizer *p_sizer = (wxGridBagSizer*) GetSizer();
 
     p_sizer->Add(p_scrolledWindow, wxGBPosition(1, 0), wxDefaultSpan, wxALL|wxEXPAND);
-
-    p_sizer->AddGrowableRow(1);
-    p_sizer->AddGrowableCol(0);
 
     m_paintArea->Bind(wxEVT_LEFT_DOWN, &GridEditorPanel::onSelectionBegin, this);
     m_paintArea->Bind(wxEVT_LEFT_UP, &GridEditorPanel::onSelectionEnd, this);
@@ -78,6 +76,7 @@ GridEditorPanel::GridEditorPanel(wxWindow *p_parent): m_gridController(nullptr),
     Bind(wxEVT_PAINT, &GridEditorPanel::sizedScrolledWindow, this);
     mergeBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::merge, this);
     unmergeBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::unmerge, this);
+    generateBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::generate, this);
 
     mergeBtn->SetBitmap(wxBitmap("./res/icons/merge.png"));
     unmergeBtn->SetBitmap(wxBitmap("./res/icons/unmerge.png"));
@@ -181,4 +180,8 @@ void GridEditorPanel::unmerge(wxCommandEvent& event) {
         m_paintArea->setSelectedTile(nullptr);
         Refresh();
     }
+}
+
+void GridEditorPanel::generate(wxCommandEvent& event) {
+    m_gridController->generate();
 }

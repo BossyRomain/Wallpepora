@@ -3,6 +3,7 @@
 
 #include "controllers/images_controller.hpp"
 #include "controllers/grid_controller.hpp"
+#include "controllers/wallpapers_controller.hpp"
 #include "cli/commands/command.hpp"
 
 class Command;
@@ -24,10 +25,14 @@ public:
 
     GridController* getGridController() const;
 
+    WallpapersController* getWallpapersController() const;
+
     // Setters
     void setImagesController(ImagesController *p_imagesController);
 
     void setGridController(GridController *p_gridController);
+
+    void setWallpapersController(WallpapersController *p_wallpapersController);
 
     // Instance's methods
     /**
@@ -43,6 +48,8 @@ private:
     ImagesController *m_imagesController;
 
     GridController *m_gridController;
+
+    WallpapersController *m_wallpapersController;
 };
 
 #endif
