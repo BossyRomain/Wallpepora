@@ -7,7 +7,7 @@ bool compareTiles(Tile *p_tile1, Tile *p_tile2) {
 }
 
 // Constructors
-GridController::GridController(): m_rows(3), m_cols(3), m_size(120), m_tiles() {
+GridController::GridController(): m_rows(7), m_cols(7), m_size(120), m_tiles() {
 }
 
 // Destructor
@@ -126,29 +126,7 @@ int GridController::merge(int rowMin, int colMin, int rowMax, int colMax) {
 
     if(i == m_tiles.size()) {
         // Possible to create the new tile
-        if(!m_tiles.empty()) {
-            for(auto it = m_tiles.begin(); it < m_tiles.end();) {
-                if((*it)->getNbCells() == 1 && (*it)->intersect(tile)) {
-                    delete (*it);
-                    it = m_tiles.erase(it);
-                } else {
-                    it++;
-                }
-            }
-        }
-
-        i = 0;
-        int id = 0;
-        while(i < m_tiles.size() && m_tiles[i]->getId() == id) {
-            id = m_tiles[i]->getId() + 1;
-            i++;
-        }
-
-        Tile *p_tile = new Tile(id, rowMin, colMin, rowMax, colMax);
-        m_tiles.push_back(p_tile);
-
-        std::sort(m_tiles.begin(), m_tiles.end(), compareTiles);
-        return id;
+        return addNewTile(rowMin, colMin, rowMax, colMax);
     }
 
     return -1;
@@ -166,4 +144,64 @@ void GridController::unmerge(int id) {
     } else {
         throw std::out_of_range("");
     }
+}
+
+void GridController::placeImage(int row, int col, Image *p_image)  {
+    int i =  0;
+    while(i < m_tiles.size() && !m_tiles[i]->cellIn(row, col)) {
+        i++;
+    }
+
+    if(i < m_tiles.size()) {
+        // A tile contains this cell
+        m_tiles[i]->setImage(p_image);
+    } else {
+        // No tile contains this cell
+        int id = addNewTile(row, col, row, col);
+        
+        i = 0;
+        while(i < m_tiles.size() && m_tiles[i]->getId() != id) {
+            i++;
+        }
+
+        m_tiles[i]->setImage(p_image);
+    }
+}
+
+void GridController::placeImage(int id, Image *p_image) {
+    int i = 0;
+    while(i < m_tiles.size() && m_tiles[i]->getId() != id) {
+        i++;
+    }
+
+    if(i < m_tiles.size()) {
+        m_tiles[i]->setImage(p_image);
+    }
+}
+
+int GridController::addNewTile(int rowMin, int colMin, int rowMax, int colMax) {
+    Tile tile(0, rowMin, colMin, rowMax, colMax);
+    if(!m_tiles.empty()) {
+        for(auto it = m_tiles.begin(); it < m_tiles.end();) {
+            if((*it)->getNbCells() == 1 && (*it)->intersect(tile)) {
+                delete (*it);
+                it = m_tiles.erase(it);
+            } else {
+                it++;
+            }
+        }
+    }
+
+    int i = 0;
+    int id = 0;
+    while(i < m_tiles.size() && m_tiles[i]->getId() == id) {
+        id = m_tiles[i]->getId() + 1;
+        i++;
+    }
+
+    Tile *p_tile = new Tile(id, rowMin, colMin, rowMax, colMax);
+    m_tiles.push_back(p_tile);
+
+    std::sort(m_tiles.begin(), m_tiles.end(), compareTiles);
+    return id;
 }

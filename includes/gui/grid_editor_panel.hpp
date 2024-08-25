@@ -2,13 +2,17 @@
 #define GRID_EDITOR_WINDOW_HPP
 
 #include <wx/wx.h>
+#include <wx/dnd.h>
 #include "controllers/grid_controller.hpp"
+#include "controllers/images_controller.hpp"
 #include "gui/paint_area.hpp"
+#include "gui/images_panel.hpp"
 
 /**
  * The panel inside the GUI which permits the user :
  * - to merge cells into tiles
  * - to unmerge tiles into cells
+ * - to place images in the tile on the grid
  */
 class GridEditorPanel: public wxPanel {
 public:
@@ -22,8 +26,12 @@ public:
     // Getters
     GridController* getGridController() const;
 
+    ImagesController* getImagesController() const;
+
     // Setters
     void setGridController(GridController *p_gridController);
+
+    void setImagesController(ImagesController *p_imagesController);
 
     // Instance's methods
     /**
@@ -36,6 +44,11 @@ public:
      */
     void onSelectionEnd(wxMouseEvent& event);
 
+    /**
+     * Invoked when the user drops an image on the grid.
+     */
+    void onImageDroped(wxCoord x, wxCoord y, int image_id);
+
 private:
     // Instance's methods
     /**
@@ -45,10 +58,10 @@ private:
     void sizedScrolledWindow(wxPaintEvent& event);
 
     /**
-     * Invoked when the user moves his mouse cursor on the grid.
+     * Invoked when the mouse cursor moves on the grid.
      */
     void onMouseMotion(wxMouseEvent& event);
-
+    
     /**
      * Invoked when the user clicks on the button to merge cells.
      */
@@ -58,9 +71,11 @@ private:
      * Invoked when the user clicks on the button to unmerge a tile.
      */
     void unmerge(wxCommandEvent& event);
-
+    
     // Attributes
     GridController *m_gridController;
+
+    ImagesController *m_imagesController;
 
     wxScrolledWindow *p_scrolledWindow;
 

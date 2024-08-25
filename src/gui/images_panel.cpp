@@ -3,6 +3,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
+#include <wx/dnd.h>
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <iostream>
@@ -75,7 +76,8 @@ ImagesPanel::ImagesPanel(wxWindow *p_parent): m_imagesController(nullptr), m_sel
     m_listCtrl->AssignImageList(m_imagesList, wxIMAGE_LIST_SMALL);
 
     m_listCtrl->Bind(wxEVT_LIST_ITEM_SELECTED, &ImagesPanel::onImageSelected, this);
-    Bind(wxEVT_CHAR_HOOK, &ImagesPanel::onDeleteImage, this);
+    m_listCtrl->Bind(wxEVT_CHAR_HOOK, &ImagesPanel::onDeleteImage, this);
+    m_listCtrl->Bind(wxEVT_LIST_BEGIN_DRAG, &ImagesPanel::onDragStart, this);
 }
 
 // Destructor
@@ -153,4 +155,11 @@ void ImagesPanel::onDeleteAllImages(wxCommandEvent& event) {
     if(dg.ShowModal() == wxID_YES) {
         m_imagesController->removeAll();
     }
+}
+
+void ImagesPanel::onDragStart(wxListEvent& event) {
+    wxTextDataObject dragData(std::to_string(m_selectedImage));
+    wxDropSource dragSource(this);
+    dragSource.SetData(dragData);
+    dragSource.DoDragDrop(wxDrag_CopyOnly);
 }

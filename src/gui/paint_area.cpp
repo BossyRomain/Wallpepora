@@ -1,4 +1,5 @@
 #include "gui/paint_area.hpp"
+#include <opencv2/opencv.hpp>
 
 // Static variables
 static const wxBrush SELECTION_BRUSH(wxColour(125, 125, 125, 100));
@@ -84,14 +85,27 @@ void PaintArea::drawTile(wxPaintDC& dc, const Tile& tile) {
     wxPoint topLeft(tile.getColMin() * m_gridController->getCellsSize(), tile.getRowMin() * m_gridController->getCellsSize());
     wxSize size(tile.getWitdh() * m_gridController->getCellsSize(), tile.getHeight() * m_gridController->getCellsSize());
 
-    wxRect rect(topLeft, size);
-    wxBrush brush = dc.GetBrush();
-    if(rect.Intersects(m_selectRect) || (m_selectedTile != nullptr && m_selectedTile->getId() == tile.getId())) {
-        dc.SetBrush(wxBrush(wxColour(200, 200, 200)));
-    }
+    if(tile.getImage() == nullptr) {
+        wxRect rect(topLeft, size);
+        wxBrush brush = dc.GetBrush();
+        if(rect.Intersects(m_selectRect) || (m_selectedTile != nullptr && m_selectedTile->getId() == tile.getId())) {
+            dc.SetBrush(wxBrush(wxColour(200, 200, 200)));
+        }
 
-    dc.DrawRectangle(rect);
-    dc.SetBrush(brush);
+        dc.DrawRectangle(rect);
+        dc.SetBrush(brush);
+    } else {
+        cv::Mat resized;
+        cv::resize(tile.getImage()->getData(), resized, 
+        cv::Size(tile.getWitdh() * m_gridController->getCellsSize(), tile.getHeight() * m_gridController->getCellsSize()));
+
+        cv::Mat rgb;
+        cv::cvtColor(resized, rgb, cv::COLOR_BGR2RGB);
+
+        wxImage image(rgb.cols, rgb.rows, rgb.data, true);
+        wxBitmap bmp(image);
+        dc.DrawBitmap(bmp, topLeft);
+    }
 }
 
 void PaintArea::drawCell(wxPaintDC& dc, int row, int col) {

@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 #include "controllers/grid_controller.hpp"
+#include "controllers/images_controller.hpp"
+#include "fixtures.hpp"
 
 /**
  * Checks :
@@ -138,4 +140,33 @@ TEST(TestsGridController, TestsCellsUnmerging) {
         FAIL();
     } catch(std::out_of_range& e) {
     }
+}
+
+/**
+ * Checks :
+ * - it is possible to place images in cells
+ * - it is possible to place images in tiles
+ */
+TEST_F(TestsImagesPaths, TestsImagesPlacing) {
+    GridController gridController;
+    ImagesController imagesController;
+
+    imagesController.load(getValidsImagesPaths());
+
+    // Placing an image in a cell
+    gridController.placeImage(0, 0, imagesController.getImage(0));
+    
+    Tile tile = gridController.getTiles()[0];
+    ASSERT_EQ(tile.getRowMin(), 0);
+    ASSERT_EQ(tile.getColMin(), 0);
+    ASSERT_EQ(tile.getWitdh(), 1);
+    ASSERT_EQ(tile.getHeight(), 1);
+    ASSERT_EQ(tile.getImage(), imagesController.getImage(0));
+
+    // Placing an image in a tile
+    int id = gridController.merge(1, 1, gridController.getRowsCount() - 1, gridController.getColsCount() - 1);
+    gridController.placeImage(id, imagesController.getImage(3));
+    
+    const Tile *p_tile = gridController.getTile(id);
+    ASSERT_EQ(p_tile->getImage(), imagesController.getImage(3));
 }

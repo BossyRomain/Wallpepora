@@ -60,6 +60,11 @@ private:
      */
     void onDeleteAllImages(wxCommandEvent& event);
 
+    /**
+     * Invoked when the user starts to drag an image from the list.
+     */
+    void onDragStart(wxListEvent& event);
+
     // Attributes
     ImagesController *m_imagesController;
 

@@ -46,6 +46,7 @@ bool App::OnInit() {
 
     GridEditorPanel *p_gridEditorPanel = new GridEditorPanel(p_mainFrame);
     p_gridEditorPanel->setGridController(m_gridController);
+    p_gridEditorPanel->setImagesController(m_imagesController);
 
     GridParamsPanel *p_gridParamsPanel = new GridParamsPanel(p_mainFrame);
     p_gridParamsPanel->setGridController(m_gridController);

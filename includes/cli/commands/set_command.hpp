@@ -4,6 +4,9 @@
 #include "cli/commands/command.hpp"
 #include <vector>
 
+/**
+ * The command used by the cli to place images in the cells and the tiles of the grid.
+ */
 class SetCmd: public Command {
 public:
 

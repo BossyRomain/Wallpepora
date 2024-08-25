@@ -24,9 +24,11 @@ public:
 private:
 
     // Instance's methods
-    void showImages(CLI *p_cli);
+    void showImages(ImagesController *p_imagesController);
 
-    void showTiles(CLI *p_cli);
+    void showTiles(GridController *p_gridController);
+
+    void showGrid(GridController *p_gridController);
 
     // Attributes
     std::vector<std::string> m_args;

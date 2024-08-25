@@ -2,6 +2,7 @@
 #define GRID_CONTROLLER_HPP
 
 #include "model/tiles.hpp"
+#include "model/images.hpp"
 #include <vector>
 
 /**
@@ -96,8 +97,29 @@ public:
      */
     void unmerge(int id);
 
+    /**
+     * Places an image in the cell at the given coordinnates.
+     * 
+     * @param row a row index.
+     * @param col a col index.
+     * @param p_image a pointer to an image.
+     */
+    void placeImage(int row, int col, Image *p_image);
+
+    /**
+     * Places an image in a tile using its id.
+     * 
+     * @param id a tile id.
+     * @param p_image a pointer to an image.
+     */
+    void placeImage(int id, Image *p_image);
+
 private:
 
+    // Instance's methods
+    int addNewTile(int rowMin, int colMin, int rowMax, int colMax);
+
+    // Attributes
     int m_rows;
 
     int m_cols;

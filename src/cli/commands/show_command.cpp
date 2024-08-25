@@ -1,4 +1,5 @@
 #include "cli/commands/show_command.hpp"
+#include <opencv2/opencv.hpp>
 #include <iostream>
 
 // Static variables
@@ -42,9 +43,11 @@ void ShowCmd::execute(CLI *p_cli) {
         case 1:
             if(m_args[0] == "-i" || m_args[0] == "--images") {
                 // Shows the list of loaded images
-                showImages(p_cli);
+                showImages(p_cli->getImagesController());
             } else if(m_args[0] == "-t" || m_args[0] == "--tiles") {
-                showTiles(p_cli);
+                showTiles(p_cli->getGridController());
+            } else if(m_args[0] == "-g" || m_args[0] == "--grid") {
+                showGrid(p_cli->getGridController());
             } else {
                 throw std::exception();
             }
@@ -58,8 +61,7 @@ void ShowCmd::execute(CLI *p_cli) {
     }
 }
 
-void ShowCmd::showImages(CLI *p_cli) {
-    ImagesController *p_imagesController = p_cli->getImagesController();
+void ShowCmd::showImages(ImagesController *p_imagesController) {
     Image *p_lastImage = p_imagesController->getImagesCount() > 0 ? p_imagesController->getImages()[p_imagesController->getImagesCount() - 1]: nullptr;
 
     const int NB_SPACES_ID = p_lastImage != nullptr ? std::to_string(p_lastImage->getId()).length() : 2;
@@ -80,15 +82,13 @@ void ShowCmd::showImages(CLI *p_cli) {
     std::cout << INFOS << std::endl;
     std::cout << std::string(INFOS.length(), '=') << std::endl;
 
-    for(Image *p_image: p_cli->getImagesController()->getImages()) {
+    for(Image *p_image: p_imagesController->getImages()) {
         std::cout << p_image->getId() << fillVoid(p_image->getId(), ID_HEADER.length()) << S_SEPARATOR;
         std::cout << p_image->getFileName() << fillVoid(p_image->getFileName(), FILE_NAME_HEADER.length()) << std::endl;
     }
 }
 
-void ShowCmd::showTiles(CLI *p_cli) {
-    GridController *p_gridController = p_cli->getGridController();
-
+void ShowCmd::showTiles(GridController *p_gridController) {
     const int NB_SPACES = p_gridController->getTilesCount() > 0 ? 
     std::to_string(p_gridController->getTiles()[p_gridController->getTilesCount() - 1].getId()).length() + 1 
     : 2;
@@ -108,11 +108,45 @@ void ShowCmd::showTiles(CLI *p_cli) {
     std::cout << infos << std::endl;
     std::cout << std::string(infos.length(), '=') << std::endl;
 
-    for(Tile tile: p_cli->getGridController()->getTiles()) {
+    for(Tile tile: p_gridController->getTiles()) {
         std::cout << tile.getId() << fillVoid(tile.getId(), ID_HEADER.length()) << S_SEPARATOR;
         std::cout << tile.getRowMin() << fillVoid(tile.getRowMin(), ROW_MIN_HEADER.length()) << S_SEPARATOR;
         std::cout << tile.getColMin() << fillVoid(tile.getColMin(), COL_MIN_HEADER.length()) << S_SEPARATOR;
         std::cout << tile.getRowMax() << fillVoid(tile.getRowMax(), ROW_MAX_HEADER.length()) << S_SEPARATOR;
         std::cout << tile.getColMax() << fillVoid(tile.getColMax(), COL_MAX_HEADER.length()) << std::endl;
     }
+}
+
+void ShowCmd::showGrid(GridController *p_gridController) {
+    cv::Mat preview(
+        cv::Size(
+            p_gridController->getColsCount() * p_gridController->getCellsSize(), 
+            p_gridController->getRowsCount() * p_gridController->getCellsSize()
+        ),
+        CV_8UC3, 
+        cv::Scalar(255, 255, 255)
+    );
+
+    for(Tile tile: p_gridController->getTiles()) {
+        if(tile.getImage() != nullptr) {
+            int x = tile.getColMin() * p_gridController->getCellsSize();
+            int y = tile.getRowMin() * p_gridController->getCellsSize();
+            int width = (tile.getColMax() - tile.getColMin() + 1) * p_gridController->getCellsSize();
+            int height = (tile.getRowMax() - tile.getRowMin() + 1) * p_gridController->getCellsSize();
+
+            cv::Mat data = tile.getImage()->getData();
+            cv::Mat resized;
+            cv::resize(data, resized, cv::Size(width, height));
+
+            for(int i = 0; i < height; i++) {
+                for(int j = 0; j < width; j++) {
+                    cv::Vec3b pixel = resized.at<cv::Vec3b>(i, j);
+                    preview.at<cv::Vec3b>(y + i, x + j) = pixel;
+                } 
+            }
+        }
+    }
+
+    cv::imshow("Preview", preview);
+    cv::waitKey(0);
 }

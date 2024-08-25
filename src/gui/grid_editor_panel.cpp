@@ -3,8 +3,58 @@
 #include <wx/xrc/xmlres.h>
 #include <opencv2/opencv.hpp>
 
+class DropTarget: public wxDropTarget {
+public:
+
+    // Constructors
+    DropTarget(GridEditorPanel *p_parent);
+
+    // Destructor
+
+    // Getters
+
+    // Setters
+
+    // Instance's methods
+    wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult ref) override;
+
+private:
+
+    GridEditorPanel *m_parent;
+};
+
 // Constructors
-GridEditorPanel::GridEditorPanel(wxWindow *p_parent): m_gridController(nullptr) {
+DropTarget::DropTarget(GridEditorPanel *p_parent): m_parent(p_parent) {
+    wxTextDataObject *p_dataObject = new wxTextDataObject();
+    SetDataObject(p_dataObject);
+}
+
+// Destructor
+
+// Getters
+
+// Setters
+
+// Instance's methods
+wxDragResult DropTarget::OnData(wxCoord x, wxCoord y, wxDragResult ref) {
+    if (GetData())
+    {
+        wxTextDataObject* textData = dynamic_cast<wxTextDataObject*>(GetDataObject());
+        int id = 0;
+        if(textData->GetText().ToInt(&id)) {
+            m_parent->onImageDroped(x, y, id);
+        }
+    }
+    return wxDragCopy;
+}
+
+/********************************************************************************
+ * GridEditorPanel
+ ********************************************************************************
+ */
+
+// Constructors
+GridEditorPanel::GridEditorPanel(wxWindow *p_parent): m_gridController(nullptr), m_imagesController(nullptr) {
     wxXmlResource::Get()->LoadPanel(this, p_parent, "grid_editor_panel");
 
     p_scrolledWindow = new wxScrolledWindow(this);
@@ -31,6 +81,8 @@ GridEditorPanel::GridEditorPanel(wxWindow *p_parent): m_gridController(nullptr) 
 
     mergeBtn->SetBitmap(wxBitmap("./res/icons/merge.png"));
     unmergeBtn->SetBitmap(wxBitmap("./res/icons/unmerge.png"));
+
+    SetDropTarget(new DropTarget(this));
 }
 
 // Destructor
@@ -42,10 +94,18 @@ GridController* GridEditorPanel::getGridController() const {
     return m_gridController;
 }
 
+ImagesController* GridEditorPanel::getImagesController() const {
+    return m_imagesController;
+}
+
 // Setters
 void GridEditorPanel::setGridController(GridController *p_gridController) {
     m_gridController = p_gridController;
     m_paintArea->setGridController(p_gridController);
+}
+
+void GridEditorPanel::setImagesController(ImagesController *p_imagesController) {
+    m_imagesController = p_imagesController;
 }
 
 // Instance's methods
@@ -68,7 +128,6 @@ void GridEditorPanel::onSelectionBegin(wxMouseEvent& event) {
 
 void GridEditorPanel::onSelectionEnd(wxMouseEvent& event) {
     m_endSelection = event.GetPosition();
-
     m_paintArea->Unbind(wxEVT_MOTION, &GridEditorPanel::onMouseMotion, this);
     
     wxRect selectionRect(m_startSelection, m_endSelection);
@@ -83,6 +142,14 @@ void GridEditorPanel::onSelectionEnd(wxMouseEvent& event) {
         m_paintArea->setSelectedTile(m_gridController->getTileAt(row, col));
     }
     m_paintArea->Refresh();
+}
+
+void GridEditorPanel::onImageDroped(wxCoord x, wxCoord y, int image_id) {
+    int row = (y - y % m_gridController->getCellsSize()) / m_gridController->getCellsSize();
+    int col = (x - x % m_gridController->getCellsSize()) / m_gridController->getCellsSize();
+
+    m_gridController->placeImage(row, col, m_imagesController->getImage(image_id));
+    Refresh();
 }
 
 void GridEditorPanel::onMouseMotion(wxMouseEvent& event) {

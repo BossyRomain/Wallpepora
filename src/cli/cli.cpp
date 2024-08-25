@@ -6,6 +6,8 @@
 #include "cli/commands/set_command.hpp"
 #include "cli/commands/merge_command.hpp"
 #include "cli/commands/unmerge_command.hpp"
+#include "cli/commands/place_command.hpp"
+#include "cli/commands/remove_command.hpp"
 #include <iostream>
 #include <vector>
 #include <filesystem>
@@ -19,6 +21,8 @@ enum Commands {
     SET,
     MERGE,
     UNMERGE,
+    PLACE,
+    REMOVE,
     SHOW
 };
 
@@ -46,6 +50,10 @@ Commands extractCommand(const std::string& line) {
         return MERGE;
     } else if(cmd == "unmerge") {
         return UNMERGE;
+    } else if(cmd == "place") {
+        return PLACE;
+    } else if(cmd == "remove") {
+        return REMOVE;
     }
 
     return NONE;
@@ -173,6 +181,35 @@ int CLI::run() {
             } catch(...) {
                 std::cout << "invalid command" << std::endl;
             }
+            break;
+
+        case PLACE:
+            try {
+                if(args.size() == 2) {
+                    p_cmd = new PlaceCmd(std::stoi(args[0]), std::stoi(args[1]));
+                } else if(args.size() == 3) {
+                    p_cmd = new PlaceCmd(std::stoi(args[0]), std::stoi(args[1]), std::stoi(args[2]));
+                } else {
+                    throw std::exception();
+                }
+            } catch(...) {
+                std::cout << "invalid command" << std::endl;
+            }
+            break;
+
+        case REMOVE:
+            try {
+                if(args.size() == 1) {
+                    p_cmd = new RemoveCmd(std::stoi(args[0]));
+                } else if(args.size() == 2) {
+                    p_cmd = new RemoveCmd(std::stoi(args[0]), std::stoi(args[1]));
+                } else {
+                    throw std::exception();
+                }
+            } catch(...) {
+                std::cout << "invalid command" << std::endl;
+            }
+            break;
 
         default:
             break;
