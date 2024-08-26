@@ -5,6 +5,7 @@
             <rows>2</rows>
             <cols>2</cols>
             <growablerows>0</growablerows>
+            <growablecols>1</growablecols>
             <vgap>5</vgap>
             <hgap>5</hgap>
             
@@ -25,7 +26,9 @@
             </object>
 
             <object class="sizeritem">
-                <object class="wxStaticBitmap" name="wallpaper_display">
+                <object class="wxScrolledWindow" name="scrolled_window">
+                    <object class="wxStaticBitmap" name="wallpaper_display">
+                    </object>
                 </object>
                 <cellpos>0, 1</cellpos>
                 <cellspan>2, 1</cellspan>

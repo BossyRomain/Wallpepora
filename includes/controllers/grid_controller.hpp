@@ -133,6 +133,14 @@ public:
      */
     bool generate();
 
+    /**
+     * Fills the tiles of the grid randomly with images.
+     * 
+     * @param images a list of images.
+     * @param hard true if even the tiles containing a image will be impacted.
+     */
+    void fill(std::vector<Image*> images, bool hard);
+
 private:
 
     // Instance's methods

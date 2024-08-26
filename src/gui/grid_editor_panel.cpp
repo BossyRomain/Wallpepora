@@ -92,6 +92,8 @@ void GridEditorPanel::Init() {
     wxButton *unmergeBtn = XRCCTRL(*this, "unmerge_btn", wxButton);
     wxButton *generateBtn = XRCCTRL(*this, "generate_btn", wxButton);
     wxSlider *p_zoomSlider = XRCCTRL(*this, "zoom_slider", wxSlider);
+    wxButton *p_fillSoftBtn = XRCCTRL(*this, "fill_soft_btn", wxButton);
+    wxButton *p_fillHardBtn = XRCCTRL(*this, "fill_hard_btn", wxButton);
 
     m_paintArea->Bind(wxEVT_LEFT_DOWN, &GridEditorPanel::onSelectionBegin, this);
     m_paintArea->Bind(wxEVT_LEFT_UP, &GridEditorPanel::onSelectionEnd, this);
@@ -101,6 +103,8 @@ void GridEditorPanel::Init() {
     unmergeBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::unmerge, this);
     generateBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::generate, this);
     p_zoomSlider->Bind(wxEVT_SLIDER, &GridEditorPanel::onZoom, this);
+    p_fillSoftBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::onFillSoft, this);
+    p_fillHardBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::onFillHard, this);
 
     SetDropTarget(new DropTarget(this));
 }
@@ -141,8 +145,8 @@ void GridEditorPanel::onSelectionEnd(wxMouseEvent& event) {
 
 void GridEditorPanel::onImageDroped(wxCoord x, wxCoord y, int image_id) {
     int cellSize = (int) (m_paintArea->getZoom() * m_gridController->getCellsSize());
-    int row = (y - y % m_gridController->getCellsSize()) / cellSize;
-    int col = (x - x % m_gridController->getCellsSize()) / cellSize;
+    int row = y / cellSize;
+    int col = x / cellSize;
 
     m_gridController->placeImage(row, col, m_imagesController->getImage(image_id));
     Refresh();
@@ -201,6 +205,18 @@ void GridEditorPanel::onZoom(wxCommandEvent& event) {
     m_paintArea->setZoom(zoom);
     Refresh();
 }
+
+void GridEditorPanel::onFillSoft(wxCommandEvent& event) {
+    m_gridController->fill(m_imagesController->getImages(), false);
+    Refresh();
+}
+
+void GridEditorPanel::onFillHard(wxCommandEvent& event)  {
+    m_gridController->fill(m_imagesController->getImages(), true);
+    Refresh();
+}
+
+
 
 
 

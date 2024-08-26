@@ -53,6 +53,22 @@
                         </object>
                     </object>
 
+                    <object class="sizeritem">
+                        <object class="wxButton" name="fill_soft_btn">
+                            <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
+                            <tooltip>Fill empty cells randomly</tooltip>
+                            <bitmap default_size="32,32">../icons/random_soft.svg</bitmap>
+                        </object>
+                    </object>
+
+                    <object class="sizeritem">
+                        <object class="wxButton" name="fill_hard_btn">
+                            <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
+                            <tooltip>Fill every cells randomly</tooltip>
+                            <bitmap default_size="32,32">../icons/random_hard.svg</bitmap>
+                        </object>
+                    </object>
+
                 </object>
                 <cellpos>0, 0</cellpos>
             </object>

@@ -10,6 +10,7 @@
 #include "cli/commands/remove_command.hpp"
 #include "cli/commands/generate_command.hpp"
 #include "cli/commands/export_command.hpp"
+#include "cli/commands/fill_command.hpp"
 #include <iostream>
 #include <vector>
 #include <filesystem>
@@ -27,6 +28,7 @@ enum Commands {
     REMOVE,
     GENERATE,
     EXPORT,
+    FILL,
     SHOW
 };
 
@@ -62,6 +64,8 @@ Commands extractCommand(const std::string& line) {
         return GENERATE;
     } else if(cmd == "export") {
         return EXPORT;
+    } else if(cmd == "fill") {
+        return FILL;
     }
 
     return NONE;
@@ -236,6 +240,20 @@ int CLI::run() {
             try {
                 if(args.size() == 2) {
                     p_cmd = new ExportCmd(std::stoi(args[0]), args[1]);
+                } else {
+                    throw std::exception();
+                }
+            } catch(...) {
+                std::cout << "invalid command" << std::endl;
+            }
+            break;
+
+        case FILL:
+            try {
+                if(args.size() == 0) {
+                    p_cmd = new FillCmd();
+                } else if(args.size() == 1 && args[0] == "--hard") {
+                    p_cmd = new FillCmd(true);
                 } else {
                     throw std::exception();
                 }

@@ -83,6 +83,16 @@ private:
      * Invoked when the user changes the zoom.
      */
     void onZoom(wxCommandEvent& event);
+
+    /**
+     * Invoked when the user clicks on the button to fill the empty cells.
+     */
+    void onFillSoft(wxCommandEvent& event);
+
+    /**
+     * Invoked when the user clicks on the button to fill every cells.
+     */
+    void onFillHard(wxCommandEvent& event);
     
     // Attributes
     GridController *m_gridController;

@@ -1,5 +1,6 @@
 #include "controllers/grid_controller.hpp"
 #include <exception>
+#include <random>
 
 // Helpers functions
 bool compareTiles(Tile *p_tile1, Tile *p_tile2) {
@@ -255,4 +256,28 @@ bool GridController::generate() {
     m_wallpapersController->add(wallpaper);
 
     return true;
+}
+
+void GridController::fill(std::vector<Image*> images, bool hard) {
+    if(images.empty()) {
+        return;
+    }
+
+    std::shuffle(images.begin(), images.end(), std::default_random_engine(time(NULL)));
+    int i = 0;
+    for(Tile *p_tile: m_tiles) {
+        if(p_tile->getImage() == nullptr || hard) {
+            p_tile->setImage(images[i % images.size()]);
+            i++;
+        }
+    }
+
+    for(int r = 0; r < m_rows; r++) {
+        for(int c = 0; c < m_cols; c++) {
+            if(getTileAt(r, c) == nullptr) {
+                placeImage(r, c, images[i % images.size()]);
+                i++;
+            }
+        }
+    }
 }

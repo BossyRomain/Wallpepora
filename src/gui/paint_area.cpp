@@ -53,24 +53,36 @@ void PaintArea::onPaint(wxPaintEvent& event) {
     int cellsSize = (int) (m_zoom * m_gridController->getCellsSize());
     SetClientSize(m_gridController->getColsCount() * cellsSize, m_gridController->getRowsCount() * cellsSize);
 
-    cv::Scalar colors[5] = {cv::Scalar(255, 255, 0), cv::Scalar(255, 0, 0), cv::Scalar(0, 255, 0), cv::Scalar(0, 0, 255), cv::Scalar(0, 255, 255)};
+    wxScrolledWindow *p_parent = dynamic_cast<wxScrolledWindow*>(GetParent());
+
+    int rowMin = p_parent->GetViewStart().y * 10 / cellsSize;
+    int colMin = p_parent->GetViewStart().x * 10 / cellsSize;
+    int rowMax = (p_parent->GetViewStart().y * 10 + p_parent->GetClientSize().GetHeight()) / cellsSize;
+    int colMax = (p_parent->GetViewStart().x * 10 + p_parent->GetClientSize().GetWidth()) / cellsSize;
+
     wxPaintDC dc(this);
 
+    Tile visibleTile(0, rowMin, colMin, rowMax, colMax);
     std::vector<Tile> tiles = m_gridController->getTiles();
     int i = 0;
     for(Tile tile: tiles) {
-        drawTile(dc, cellsSize, tile);
+        if(tile.intersect(visibleTile)) {
+            drawTile(dc, cellsSize, tile);
+        }
     }
+    
 
     for(int r = 0; r < m_gridController->getRowsCount(); r++) {
         for(int c = 0; c < m_gridController->getColsCount(); c++) {
-            int j = 0;
-            while(j < tiles.size() && !tiles[j].cellIn(r, c)) {
-                j++;
-            }
+            if(visibleTile.cellIn(r, c)) {
+                int j = 0;
+                while(j < tiles.size() && !tiles[j].cellIn(r, c)) {
+                    j++;
+                }
 
-            if(j == tiles.size()) {
-                drawCell(dc, cellsSize, r, c);
+                if(j == tiles.size()) {
+                    drawCell(dc, cellsSize, r, c);
+                }
             }
         }
     }

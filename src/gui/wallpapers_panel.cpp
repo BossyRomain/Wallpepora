@@ -39,6 +39,10 @@ void WallpapersPanel::Init() {
 
     wxButton *p_exportBtn = XRCCTRL(*this, "export_btn", wxButton);
 
+    wxScrolledWindow *p_scrolled_window = XRCCTRL(*this, "scrolled_window", wxScrolledWindow);
+    p_scrolled_window->SetScrollRate(10, 10);
+    p_scrolled_window->ShowScrollbars(wxSHOW_SB_DEFAULT, wxSHOW_SB_DEFAULT);
+
     m_display = XRCCTRL(*this, "wallpaper_display", wxStaticBitmap);
 
     m_listCtrl->Bind(wxEVT_LIST_ITEM_SELECTED, &WallpapersPanel::onWallpaperSelected, this);
@@ -58,8 +62,9 @@ void WallpapersPanel::onWallpaperSelected(wxListEvent& event) {
     cv::Mat wallpaper = m_wallpapersController->getWallpaper(id);
     wxBitmap bmp = createThumbnail(wallpaper, wallpaper.cols, wallpaper.rows);
 
+    wxScrolledWindow *p_scrolled_window = XRCCTRL(*this, "scrolled_window", wxScrolledWindow);
+    p_scrolled_window->SetVirtualSize(bmp.GetSize());
     m_display->SetBitmap(bmp);
-    Refresh();
 }
 
 void WallpapersPanel::exportWallpaper(wxCommandEvent& event) {
