@@ -34,6 +34,7 @@ To compile the project, use CMake, there is already a CMakeLists.txt to compile 
     mkdir build
     cd build
     cmake ..
+    make
 
 # CLI commands
 This section presents the commands supported by the CLI.
