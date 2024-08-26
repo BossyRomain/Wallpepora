@@ -10,7 +10,7 @@
 
             <object class="sizeritem">
                 <object class="wxScrolledWindow" name="scrolledWindow">
-                    <object class="PaintArea" name="paint_area"/>
+                    <object class="GridPainter" name="paint_area"/>
                 </object>
                 <cellpos>1, 0</cellpos>
                 <flag>wxEXPAND</flag>

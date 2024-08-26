@@ -5,7 +5,7 @@
 #include <wx/dnd.h>
 #include "controllers/grid_controller.hpp"
 #include "controllers/images_controller.hpp"
-#include "gui/paint_area.hpp"
+#include "gui/grid_painter.hpp"
 #include "gui/images_panel.hpp"
 
 /**
@@ -101,7 +101,7 @@ private:
 
     wxScrolledWindow *m_scrolledWindow;
 
-    PaintArea *m_paintArea;
+    GridPainter *m_paintArea;
 
     wxPoint m_startSelection;
 

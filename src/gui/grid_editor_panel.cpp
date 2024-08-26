@@ -86,8 +86,8 @@ void GridEditorPanel::Init() {
     m_scrolledWindow->SetScrollRate(10, 10);
     m_scrolledWindow->ShowScrollbars(wxSHOW_SB_DEFAULT, wxSHOW_SB_DEFAULT);
 
-    m_paintArea = XRCCTRL(*this, "paint_area", PaintArea);
-    m_paintArea->Bind(wxEVT_PAINT, &PaintArea::onPaint, m_paintArea);
+    m_paintArea = XRCCTRL(*this, "paint_area", GridPainter);
+    m_paintArea->Bind(wxEVT_PAINT, &GridPainter::onPaint, m_paintArea);
     wxButton *mergeBtn = XRCCTRL(*this, "merge_btn", wxButton);
     wxButton *unmergeBtn = XRCCTRL(*this, "unmerge_btn", wxButton);
     wxButton *generateBtn = XRCCTRL(*this, "generate_btn", wxButton);
@@ -112,9 +112,11 @@ void GridEditorPanel::Init() {
 void GridEditorPanel::sizedScrolledWindow(wxPaintEvent& event) {
     assert(m_gridController != nullptr);
 
-    int size = (int) (m_paintArea->getZoom() * m_gridController->getCellsSize());
-    wxSize vSize(m_gridController->getColsCount() * size, m_gridController->getRowsCount() * size);
-    m_scrolledWindow->SetVirtualSize(vSize);
+    wxSize virtualSize(
+        m_gridController->getColsCount() * m_paintArea->getCellsSize(), 
+        m_gridController->getRowsCount() * m_paintArea->getCellsSize()
+        );
+    m_scrolledWindow->SetVirtualSize(virtualSize);
 }
 
 void GridEditorPanel::onSelectionBegin(wxMouseEvent& event) {
@@ -134,9 +136,8 @@ void GridEditorPanel::onSelectionEnd(wxMouseEvent& event) {
     } else {
         m_paintArea->setSelecRect(S_NO_SELECTION);
 
-        int cellSize = (int) (m_paintArea->getZoom() * m_gridController->getCellsSize());
-        int row = event.GetPosition().y / cellSize;
-        int col = event.GetPosition().x / cellSize;
+        int row = event.GetPosition().y / m_paintArea->getCellsSize();
+        int col = event.GetPosition().x / m_paintArea->getCellsSize();
 
         m_paintArea->setSelectedTile(m_gridController->getTileAt(row, col));
     }
@@ -144,9 +145,9 @@ void GridEditorPanel::onSelectionEnd(wxMouseEvent& event) {
 }
 
 void GridEditorPanel::onImageDroped(wxCoord x, wxCoord y, int image_id) {
-    int cellSize = (int) (m_paintArea->getZoom() * m_gridController->getCellsSize());
-    int row = y / cellSize;
-    int col = x / cellSize;
+    wxPoint clientPos = m_scrolledWindow->CalcUnscrolledPosition(wxPoint(x, y));
+    int row = clientPos.y / m_paintArea->getCellsSize();
+    int col = clientPos.x / m_paintArea->getCellsSize();
 
     m_gridController->placeImage(row, col, m_imagesController->getImage(image_id));
     Refresh();
@@ -161,12 +162,10 @@ void GridEditorPanel::onMouseMotion(wxMouseEvent& event) {
 }
 
 void GridEditorPanel::merge(wxCommandEvent& event) {
-    int cellSize = (int) (m_paintArea->getZoom() * m_gridController->getCellsSize());
-
-    int rowMin = (m_startSelection.y < m_endSelection.y ? m_startSelection.y : m_endSelection.y) / cellSize;
-    int colMin = (m_startSelection.x < m_endSelection.x ? m_startSelection.x : m_endSelection.x) / cellSize;
-    int rowMax = (m_startSelection.y > m_endSelection.y ? m_startSelection.y : m_endSelection.y) / cellSize;
-    int colMax = (m_startSelection.x > m_endSelection.x ? m_startSelection.x : m_endSelection.x) / cellSize;
+    int rowMin = (m_startSelection.y < m_endSelection.y ? m_startSelection.y : m_endSelection.y) / m_paintArea->getCellsSize();
+    int colMin = (m_startSelection.x < m_endSelection.x ? m_startSelection.x : m_endSelection.x) / m_paintArea->getCellsSize();
+    int rowMax = (m_startSelection.y > m_endSelection.y ? m_startSelection.y : m_endSelection.y) / m_paintArea->getCellsSize();
+    int colMax = (m_startSelection.x > m_endSelection.x ? m_startSelection.x : m_endSelection.x) / m_paintArea->getCellsSize();
 
     m_startSelection = wxPoint(-1, -1);
     m_endSelection = wxPoint(-1, -1);

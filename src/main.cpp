@@ -44,7 +44,7 @@ bool App::OnInit() {
     wxXmlResource::Get()->AddHandler(new WallpapersPanelXmlHandler);
     wxXmlResource::Get()->AddHandler(new GridParamsPanelXmlHandler);
     wxXmlResource::Get()->AddHandler(new GridEditorPanelXmlHandler);
-    wxXmlResource::Get()->AddHandler(new PaintAreaXmlHandler);
+    wxXmlResource::Get()->AddHandler(new GridPainterXmlHandler);
 
     wxXmlResource::Get()->LoadAllFiles("./res/ui/");
 

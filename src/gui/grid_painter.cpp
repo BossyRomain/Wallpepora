@@ -1,73 +1,76 @@
-#include "gui/paint_area.hpp"
+#include "gui/grid_painter.hpp"
 #include <opencv2/opencv.hpp>
 
 // Static variables
 static const wxBrush SELECTION_BRUSH(wxColour(254, 254, 250, 150));
 
 // Constructors
-PaintArea::PaintArea(): m_gridController(nullptr), m_selectRect(S_NO_SELECTION), m_selectedTile(nullptr), m_zoom(1.0f) {
+GridPainter::GridPainter(): m_gridController(nullptr), m_selectRect(S_NO_SELECTION), m_selectedTile(nullptr), m_zoom(1.0f) {
 }
 
 // Destructor
 
 // Getters
-GridController* PaintArea::getGridController() const {
+GridController* GridPainter::getGridController() const {
     return m_gridController;
 }
 
-wxRect PaintArea::getSelectRect() const {
+wxRect GridPainter::getSelectRect() const {
     return m_selectRect;
 }
 
-const Tile* PaintArea::getSelectedTile() const {
+const Tile* GridPainter::getSelectedTile() const {
     return m_selectedTile;
 }
 
-float PaintArea::getZoom() const {
+float GridPainter::getZoom() const {
     return m_zoom;
 }
 
+int GridPainter::getCellsSize() const {
+    return (int) (m_zoom * m_gridController->getCellsSize());
+}
+
 // Setters
-void PaintArea::setGridController(GridController *p_gridController) {
+void GridPainter::setGridController(GridController *p_gridController) {
     m_gridController = p_gridController;
 }
 
-void PaintArea::setSelecRect(wxRect selection) {
+void GridPainter::setSelecRect(wxRect selection) {
     m_selectRect = selection;
 }
 
-void PaintArea::setSelectedTile(const Tile *p_tile) {
+void GridPainter::setSelectedTile(const Tile *p_tile) {
     m_selectedTile = p_tile;
 }
 
-void PaintArea::setZoom(float zoom) {
+void GridPainter::setZoom(float zoom) {
     m_zoom = zoom;
 }
 
 // Instance's methods
-void PaintArea::onPaint(wxPaintEvent& event) {
+void GridPainter::onPaint(wxPaintEvent& event) {
     if(m_gridController == nullptr) {
         return;
     }
 
-    int cellsSize = (int) (m_zoom * m_gridController->getCellsSize());
-    SetClientSize(m_gridController->getColsCount() * cellsSize, m_gridController->getRowsCount() * cellsSize);
+    SetClientSize(m_gridController->getColsCount() * getCellsSize(), m_gridController->getRowsCount() * getCellsSize());
 
     wxScrolledWindow *p_parent = dynamic_cast<wxScrolledWindow*>(GetParent());
 
-    int rowMin = p_parent->GetViewStart().y * 10 / cellsSize;
-    int colMin = p_parent->GetViewStart().x * 10 / cellsSize;
-    int rowMax = (p_parent->GetViewStart().y * 10 + p_parent->GetClientSize().GetHeight()) / cellsSize;
-    int colMax = (p_parent->GetViewStart().x * 10 + p_parent->GetClientSize().GetWidth()) / cellsSize;
+    int rowMin = p_parent->GetViewStart().y * 10 / getCellsSize();
+    int colMin = p_parent->GetViewStart().x * 10 / getCellsSize();
+    int rowMax = (p_parent->GetViewStart().y * 10 + p_parent->GetClientSize().GetHeight()) / getCellsSize();
+    int colMax = (p_parent->GetViewStart().x * 10 + p_parent->GetClientSize().GetWidth()) / getCellsSize();
 
     wxPaintDC dc(this);
 
+    int i = 0;
     Tile visibleTile(0, rowMin, colMin, rowMax, colMax);
     std::vector<Tile> tiles = m_gridController->getTiles();
-    int i = 0;
     for(Tile tile: tiles) {
         if(tile.intersect(visibleTile)) {
-            drawTile(dc, cellsSize, tile);
+            drawTile(dc, tile);
         }
     }
     
@@ -81,7 +84,7 @@ void PaintArea::onPaint(wxPaintEvent& event) {
                 }
 
                 if(j == tiles.size()) {
-                    drawCell(dc, cellsSize, r, c);
+                    drawCell(dc, r, c);
                 }
             }
         }
@@ -94,9 +97,9 @@ void PaintArea::onPaint(wxPaintEvent& event) {
     }
 }
 
-void PaintArea::drawTile(wxPaintDC& dc, int cellsSize, const Tile& tile) {
-    wxPoint topLeft(tile.getColMin() * cellsSize, tile.getRowMin() * cellsSize);
-    wxSize rectSize(tile.getWitdh() * cellsSize, tile.getHeight() * cellsSize);
+void GridPainter::drawTile(wxPaintDC& dc, const Tile& tile) {
+    wxPoint topLeft(tile.getColMin() * getCellsSize(), tile.getRowMin() * getCellsSize());
+    wxSize rectSize(tile.getWitdh() * getCellsSize(), tile.getHeight() * getCellsSize());
 
     if(tile.getImage() == nullptr) {
         wxRect rect(topLeft, rectSize);
@@ -110,7 +113,7 @@ void PaintArea::drawTile(wxPaintDC& dc, int cellsSize, const Tile& tile) {
     } else {
         cv::Mat resized;
         cv::resize(tile.getImage()->getData(), resized, 
-        cv::Size(tile.getWitdh() * cellsSize, tile.getHeight() * cellsSize));
+        cv::Size(tile.getWitdh() * getCellsSize(), tile.getHeight() * getCellsSize()));
 
         cv::Mat rgb;
         cv::cvtColor(resized, rgb, cv::COLOR_BGR2RGB);
@@ -121,9 +124,9 @@ void PaintArea::drawTile(wxPaintDC& dc, int cellsSize, const Tile& tile) {
     }
 }
 
-void PaintArea::drawCell(wxPaintDC& dc, int cellsSize, int row, int col) {
-    wxPoint topLeft(col * cellsSize, row * cellsSize);
-    wxSize rectSize(cellsSize, cellsSize);
+void GridPainter::drawCell(wxPaintDC& dc, int row, int col) {
+    wxPoint topLeft(col * getCellsSize(), row * getCellsSize());
+    wxSize rectSize(getCellsSize(), getCellsSize());
 
     wxRect rect(topLeft, rectSize);
     wxBrush brush = dc.GetBrush();
@@ -138,16 +141,16 @@ void PaintArea::drawCell(wxPaintDC& dc, int cellsSize, int row, int col) {
 
 
 
-wxIMPLEMENT_DYNAMIC_CLASS(PaintAreaXmlHandler, wxXmlResourceHandler);
+wxIMPLEMENT_DYNAMIC_CLASS(GridPainterXmlHandler, wxXmlResourceHandler);
  
-PaintAreaXmlHandler::PaintAreaXmlHandler()
+GridPainterXmlHandler::GridPainterXmlHandler()
 {
     AddWindowStyles();
 }
  
-wxObject *PaintAreaXmlHandler::DoCreateResource()
+wxObject *GridPainterXmlHandler::DoCreateResource()
 {
-    XRC_MAKE_INSTANCE(control, PaintArea)
+    XRC_MAKE_INSTANCE(control, GridPainter)
     
     control->Create(m_parentAsWindow, GetID(), GetPosition(), GetSize(), GetStyle(), GetName());
     CreateChildren(control);
@@ -157,7 +160,7 @@ wxObject *PaintAreaXmlHandler::DoCreateResource()
     return control;
 }
  
-bool PaintAreaXmlHandler::CanHandle(wxXmlNode *node)
+bool GridPainterXmlHandler::CanHandle(wxXmlNode *node)
 {
-    return IsOfClass(node, wxT("PaintArea"));
+    return IsOfClass(node, wxT("GridPainter"));
 }

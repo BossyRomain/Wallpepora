@@ -12,11 +12,11 @@ const static wxRect S_NO_SELECTION(wxPoint(-1, -1), wxSize(0, 0));
  * Draw the current state of the grid inside the GUI.
  * Also draw other elements like the rectangle of selection when the user selects cells to merge.
  */
-class PaintArea: public wxPanel {
+class GridPainter: public wxPanel {
 public:
 
     // Constructors
-    PaintArea();
+    GridPainter();
 
     // Destructor
 
@@ -28,6 +28,8 @@ public:
     const Tile* getSelectedTile() const;
 
     float getZoom() const;
+
+    int getCellsSize() const;
 
     // Setters
     void setGridController(GridController *p_gridController);
@@ -50,12 +52,12 @@ private:
     /**
      * Draws a tile.
      */
-    void drawTile(wxPaintDC& dc, int cellsSize, const Tile& tile);
+    void drawTile(wxPaintDC& dc, const Tile& tile);
 
     /**
      * Draws a cell.
      */
-    void drawCell(wxPaintDC& dc, int cellsSize, int row, int col);
+    void drawCell(wxPaintDC& dc, int row, int col);
 
     // Attributes
     GridController *m_gridController;
@@ -67,11 +69,11 @@ private:
     float m_zoom;
 };
 
-class PaintAreaXmlHandler : public wxXmlResourceHandler
+class GridPainterXmlHandler : public wxXmlResourceHandler
 {
 public:
     // Constructor.
-    PaintAreaXmlHandler();
+    GridPainterXmlHandler();
  
     // Creates the control and returns a pointer to it.
     virtual wxObject *DoCreateResource();
@@ -80,7 +82,7 @@ public:
     virtual bool CanHandle(wxXmlNode *node);
  
     // Register with wxWidgets' dynamic class subsystem.
-    wxDECLARE_DYNAMIC_CLASS(PaintAreaXmlHandler);
+    wxDECLARE_DYNAMIC_CLASS(GridPainterXmlHandler);
 };
 
 #endif
