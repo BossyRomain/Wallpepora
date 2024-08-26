@@ -13,10 +13,7 @@ GridController::GridController(): m_rows(7), m_cols(7), m_size(120), m_tiles() {
 
 // Destructor
 GridController::~GridController() {
-    for(Tile *p_tile: m_tiles) {
-        delete p_tile;
-    }
-    m_tiles.clear();
+    clear();
 }
 
 // Getters
@@ -267,17 +264,34 @@ void GridController::fill(std::vector<Image*> images, bool hard) {
     int i = 0;
     for(Tile *p_tile: m_tiles) {
         if(p_tile->getImage() == nullptr || hard) {
-            p_tile->setImage(images[i % images.size()]);
+            p_tile->setImage(images[i]);
             i++;
+        }
+
+        if(i == images.size()) {
+            std::shuffle(images.begin(), images.end(), std::default_random_engine(time(NULL)));
+            i = 0;
         }
     }
 
     for(int r = 0; r < m_rows; r++) {
         for(int c = 0; c < m_cols; c++) {
             if(getTileAt(r, c) == nullptr) {
-                placeImage(r, c, images[i % images.size()]);
+                placeImage(r, c, images[i]);
                 i++;
+            }
+
+            if(i == images.size()) {
+                std::shuffle(images.begin(), images.end(), std::default_random_engine(time(NULL)));
+                i = 0;
             }
         }
     }
+}
+
+void GridController::clear() {
+    for(Tile *p_tile: m_tiles) {
+        delete p_tile;
+    }
+    m_tiles.clear();
 }

@@ -1,6 +1,7 @@
 #include "gui/grid_editor_panel.hpp"
 #include <wx/xrc/xh_all.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/msgdlg.h>
 #include <opencv2/opencv.hpp>
 
 class DropTarget: public wxDropTarget {
@@ -94,6 +95,7 @@ void GridEditorPanel::Init() {
     wxSlider *p_zoomSlider = XRCCTRL(*this, "zoom_slider", wxSlider);
     wxButton *p_fillSoftBtn = XRCCTRL(*this, "fill_soft_btn", wxButton);
     wxButton *p_fillHardBtn = XRCCTRL(*this, "fill_hard_btn", wxButton);
+    wxButton *p_clearBtn = XRCCTRL(*this, "clear_btn", wxButton);
 
     m_paintArea->Bind(wxEVT_LEFT_DOWN, &GridEditorPanel::onSelectionBegin, this);
     m_paintArea->Bind(wxEVT_LEFT_UP, &GridEditorPanel::onSelectionEnd, this);
@@ -105,6 +107,7 @@ void GridEditorPanel::Init() {
     p_zoomSlider->Bind(wxEVT_SLIDER, &GridEditorPanel::onZoom, this);
     p_fillSoftBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::onFillSoft, this);
     p_fillHardBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::onFillHard, this);
+    p_clearBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::onClearGrid, this);
 
     SetDropTarget(new DropTarget(this));
 }
@@ -213,6 +216,14 @@ void GridEditorPanel::onFillSoft(wxCommandEvent& event) {
 void GridEditorPanel::onFillHard(wxCommandEvent& event)  {
     m_gridController->fill(m_imagesController->getImages(), true);
     Refresh();
+}
+
+void GridEditorPanel::onClearGrid(wxCommandEvent& event) {
+    wxMessageDialog dg(this, "This action will reset the grid and can't be canceled. Are you sure ?", "", wxYES_NO|wxNO_DEFAULT);
+    if(dg.ShowModal() == wxID_YES) {
+        m_gridController->clear();
+        Refresh();
+    }
 }
 
 

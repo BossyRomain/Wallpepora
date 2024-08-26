@@ -93,6 +93,11 @@ private:
      * Invoked when the user clicks on the button to fill every cells.
      */
     void onFillHard(wxCommandEvent& event);
+
+    /**
+     * Invoked when the user clicks on the button to clear the grid.
+     */
+    void onClearGrid(wxCommandEvent& event);
     
     // Attributes
     GridController *m_gridController;

@@ -11,6 +11,7 @@
                 <label>Grid Editor</label>
 		        <selected>1</selected>
                 <object class="wxPanel" name="grid_page">
+                    <bg>#F8F9FA</bg>
                     <object class="wxGridBagSizer">
                         <rows>1</rows>
                         <cols>3</cols>
@@ -45,7 +46,9 @@
 
             <object class="notebookpage">
                 <label>Wallpapers</label>
-                <object_ref ref="wallpapers_panel"/>
+                <object_ref ref="wallpapers_panel">
+                    <bg>#DEE2E6</bg>
+                </object_ref>
             </object>
 
         </object>

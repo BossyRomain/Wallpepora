@@ -26,6 +26,8 @@
                             <tooltip>Merge cells</tooltip>
                             <bitmap default_size="32,32">../icons/merge.svg</bitmap>
                         </object>
+                        <flag>wxRIGHT</flag>
+                        <border>10</border>
                     </object>
 
                     <object class="sizeritem">
@@ -34,14 +36,17 @@
                             <tooltip>Unmerge cells</tooltip>
                             <bitmap default_size="32,32">../icons/unmerge.svg</bitmap>
                         </object>
+                        <flag>wxRIGHT</flag>
+                        <border>10</border>
                     </object>
 
                     <object class="sizeritem">
                         <object class="wxStaticText">
                             <style>wxALIGN_RIGHT</style>
-                            <label>  Zoom: </label>
+                            <label>Zoom: </label>
                         </object>
-                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                        <flag>wxBOTTOM|wxALIGN_BOTTOM</flag>
+                        <border>7</border>
                     </object>
 
                     <object class="sizeritem">
@@ -51,6 +56,8 @@
                             <max>200</max>
                             <value>100</value>
                         </object>
+                        <flag>wxRIGHT</flag>
+                        <border>10</border>
                     </object>
 
                     <object class="sizeritem">
@@ -59,6 +66,8 @@
                             <tooltip>Fill empty cells randomly</tooltip>
                             <bitmap default_size="32,32">../icons/random_soft.svg</bitmap>
                         </object>
+                        <flag>wxRIGHT</flag>
+                        <border>10</border>
                     </object>
 
                     <object class="sizeritem">
@@ -66,6 +75,17 @@
                             <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
                             <tooltip>Fill every cells randomly</tooltip>
                             <bitmap default_size="32,32">../icons/random_hard.svg</bitmap>
+                        </object>
+                        <flag>wxRIGHT</flag>
+                        <border>10</border>
+                    </object>
+                    
+                    <object class="sizeritem">
+                        <object class="wxButton" name="clear_btn">
+                            <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
+                            <tooltip>Reset the grid</tooltip>
+                            <bitmap default_size="32,32">../icons/reset.svg</bitmap>
+                            <bg>#FF0000</bg>
                         </object>
                     </object>
 

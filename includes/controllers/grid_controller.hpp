@@ -141,6 +141,11 @@ public:
      */
     void fill(std::vector<Image*> images, bool hard);
 
+    /**
+     * Clears the tiles of the grid.
+     */
+    void clear();
+
 private:
 
     // Instance's methods
