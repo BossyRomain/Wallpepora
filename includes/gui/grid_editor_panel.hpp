@@ -18,7 +18,7 @@ class GridEditorPanel: public wxPanel {
 public:
 
     // Constructors
-    GridEditorPanel(wxWindow *p_parent);
+    GridEditorPanel();
 
     // Destructor
     ~GridEditorPanel();
@@ -34,6 +34,8 @@ public:
     void setImagesController(ImagesController *p_imagesController);
 
     // Instance's methods
+    void Init();
+
     /**
      * Invoked when the user press the left button of his mouse.
      */
@@ -76,13 +78,18 @@ private:
      * Invoked when the user clicks on the button to generate a new wallpaper.
      */
     void generate(wxCommandEvent& event);
+
+    /**
+     * Invoked when the user changes the zoom.
+     */
+    void onZoom(wxCommandEvent& event);
     
     // Attributes
     GridController *m_gridController;
 
     ImagesController *m_imagesController;
 
-    wxScrolledWindow *p_scrolledWindow;
+    wxScrolledWindow *m_scrolledWindow;
 
     PaintArea *m_paintArea;
 
@@ -90,5 +97,22 @@ private:
 
     wxPoint m_endSelection;
 };
+
+class GridEditorPanelXmlHandler : public wxXmlResourceHandler
+{
+public:
+    // Constructor.
+    GridEditorPanelXmlHandler();
+ 
+    // Creates the control and returns a pointer to it.
+    virtual wxObject *DoCreateResource();
+ 
+    // Returns true if we know how to create a control for the given node.
+    virtual bool CanHandle(wxXmlNode *node);
+ 
+    // Register with wxWidgets' dynamic class subsystem.
+    wxDECLARE_DYNAMIC_CLASS(GridEditorPanelXmlHandler);
+};
+
 
 #endif

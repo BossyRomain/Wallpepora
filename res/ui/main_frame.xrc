@@ -15,19 +15,37 @@
                         <rows>1</rows>
                         <cols>3</cols>
                         <vgap>5</vgap>
-                        <hgap>5</hgap>
+                        <hgap>30</hgap>
+                        <growablerows>0</growablerows>
+                        <growablecols>1</growablecols>
+
+                        <object class="sizeritem">
+                            <object_ref ref="grid_params_panel"/>
+                            <cellpos>0, 0</cellpos>
+                            <flag>wxALL|wxEXPAND</flag>
+                            <border>15</border>
+                        </object>
+
+                        <object class="sizeritem">
+                            <object_ref ref="grid_editor_panel"/>
+                            <cellpos>0, 1</cellpos>
+                            <flag>wxALL|wxEXPAND</flag>
+                            <border>15</border>
+                        </object>
+
+                        <object class="sizeritem">
+                            <object_ref ref="images_panel"/>
+                            <cellpos>0, 2</cellpos>
+                            <flag>wxEXPAND</flag>
+                        </object>
+
                     </object>
                 </object>
             </object>
 
             <object class="notebookpage">
                 <label>Wallpapers</label>
-                <object class="wxPanel" name="wallpapers_page">
-                    <object class="wxGridBagSizer">
-                        <rows>1</rows>
-                        <cols>1</cols>
-                    </object>
-                </object>
+                <object_ref ref="wallpapers_panel"/>
             </object>
 
         </object>

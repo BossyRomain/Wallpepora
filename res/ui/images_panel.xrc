@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resource>
-    <object class="wxPanel" name="images_panel">
+    <object class="ImagesPanel" name="images_panel">
         <object class="wxGridBagSizer">
             <rows>2</rows>
             <cols>2</cols>
@@ -20,6 +20,9 @@
             <object class="sizeritem">
                 <object class="wxButton" name="load_btn">
                     <style>wxBU_NOTEXT|wxBU_EXACTFIT</style>
+                    <bg>#00FF00</bg>
+                    <tooltip>Load new images</tooltip>
+                    <bitmap default_size="32,32">../icons/add.svg</bitmap>
                 </object>
                 <cellpos>1, 0</cellpos>
                 <flag>wxALL|wxLEFT</flag>
@@ -28,6 +31,9 @@
             <object class="sizeritem">
                 <object class="wxButton" name="delete_all_btn">
                     <style>wxBU_NOTEXT|wxBU_EXACTFIT</style>
+                    <bg>#FF0000</bg>
+                    <bitmap default_size="32,32">../icons/trash.svg</bitmap>
+                    <tooltip>Delete all images</tooltip>
                 </object>
                 <cellpos>1, 1</cellpos>
                 <flag>wxALL|wxALIGN_RIGHT</flag>

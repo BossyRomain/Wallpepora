@@ -24,8 +24,6 @@ public:
     // Setters
 
     // Instance's methods
-    void init(ImagesPanel *p_imagesPanel, GridParamsPanel *p_gridParamsPanel, 
-    GridEditorPanel *p_gridEditorPanel, WallpapersPanel *p_wallpapersPanel);
 
 private:
 

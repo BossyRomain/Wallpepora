@@ -3,6 +3,8 @@
 
 #include <wx/wx.h>
 #include <wx/listctrl.h>
+#include <wx/xrc/xh_all.h>
+#include <wx/xrc/xmlres.h>
 #include "controllers/images_controller.hpp"
 
 /**
@@ -16,7 +18,7 @@ class ImagesPanel: public wxPanel, public ImagesListener {
 public:
 
     // Constructors
-    ImagesPanel(wxWindow *p_parent);
+    ImagesPanel();
 
     // Destructor
     ~ImagesPanel();
@@ -28,6 +30,8 @@ public:
     void setImagesController(ImagesController *p_imagesController);
 
     // Instance's methods
+    void Init();
+
     void onImageLoaded(Image *p_image) override;
 
     void onImageDeleted(Image image) override;
@@ -41,11 +45,6 @@ private:
      * Does nothing if the user select no file.
      */
     void loadImages(wxCommandEvent& event);
-
-    /**
-     * Invoked when the user select an image in the list of images. 
-     */
-    void onImageSelected(wxListEvent& event);
 
     /**
      * Invoked when the user press the key DELETE on his keyboard.
@@ -71,8 +70,22 @@ private:
     wxListCtrl *m_listCtrl;
 
     wxImageList *m_imagesList;
+};
 
-    int m_selectedImage;
+class ImagesPanelXmlHandler : public wxXmlResourceHandler
+{
+public:
+    // Constructor.
+    ImagesPanelXmlHandler();
+ 
+    // Creates the control and returns a pointer to it.
+    virtual wxObject *DoCreateResource();
+ 
+    // Returns true if we know how to create a control for the given node.
+    virtual bool CanHandle(wxXmlNode *node);
+ 
+    // Register with wxWidgets' dynamic class subsystem.
+    wxDECLARE_DYNAMIC_CLASS(ImagesPanelXmlHandler);
 };
 
 #endif

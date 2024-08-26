@@ -40,29 +40,31 @@ bool App::OnInit() {
     assert(m_gridController != nullptr);
 
     wxXmlResource::Get()->InitAllHandlers();
+    wxXmlResource::Get()->AddHandler(new ImagesPanelXmlHandler);
+    wxXmlResource::Get()->AddHandler(new WallpapersPanelXmlHandler);
+    wxXmlResource::Get()->AddHandler(new GridParamsPanelXmlHandler);
+    wxXmlResource::Get()->AddHandler(new GridEditorPanelXmlHandler);
+    wxXmlResource::Get()->AddHandler(new PaintAreaXmlHandler);
+
     wxXmlResource::Get()->LoadAllFiles("./res/ui/");
-    wxXmlResource::Get()->LoadAllFiles("./res/icons/");
 
     MainFrame *p_mainFrame = new MainFrame();
-    wxPanel *p_gridPanel = XRCCTRL(*p_mainFrame, "grid_page", wxPanel);
-    wxPanel *p_wallpapersPage = XRCCTRL(*p_mainFrame, "wallpapers_page", wxPanel);
 
-    ImagesPanel *p_imagesPanel = new ImagesPanel(p_gridPanel);
+    ImagesPanel *p_imagesPanel = XRCCTRL(*p_mainFrame, "images_panel", ImagesPanel);
+    GridEditorPanel *p_gridEditorPanel = XRCCTRL(*p_mainFrame, "grid_editor_panel", GridEditorPanel);
+    GridParamsPanel *p_gridParamsPanel = XRCCTRL(*p_mainFrame, "grid_params_panel", GridParamsPanel);
+    WallpapersPanel *p_wallpapersPanel = XRCCTRL(*p_mainFrame, "wallpapers_panel", WallpapersPanel);
+    p_mainFrame->Show(true);
+
     p_imagesPanel->setImagesController(m_imagesController);
 
-    GridEditorPanel *p_gridEditorPanel = new GridEditorPanel(p_gridPanel);
     p_gridEditorPanel->setGridController(m_gridController);
     p_gridEditorPanel->setImagesController(m_imagesController);
 
-    GridParamsPanel *p_gridParamsPanel = new GridParamsPanel(p_gridPanel);
     p_gridParamsPanel->setGridController(m_gridController);
     p_gridParamsPanel->setGridEditorPanel(p_gridEditorPanel);
 
-    WallpapersPanel *p_wallpapersPanel = new WallpapersPanel(p_wallpapersPage);
     p_wallpapersPanel->setWallpapersController(m_wallpapersController);
-
-    p_mainFrame->init(p_imagesPanel, p_gridParamsPanel, p_gridEditorPanel, p_wallpapersPanel);    
-    p_mainFrame->Show(true);
 
     return true;
 }

@@ -7,21 +7,7 @@
 #define THUMBNAIL_SIZE 300
 
 // Constructors
-WallpapersPanel::WallpapersPanel(wxWindow *p_parent): m_wallpapersController(nullptr) {
-    wxXmlResource::Get()->LoadPanel(this, p_parent, "wallpapers_panel");
-
-    m_wallpapersList = new wxImageList(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
-
-    m_listCtrl = XRCCTRL(*this, "wallpapers_list", wxListCtrl);
-    m_listCtrl->InsertColumn(0, "", wxLIST_FORMAT_LEFT, THUMBNAIL_SIZE);
-    m_listCtrl->AssignImageList(m_wallpapersList, wxIMAGE_LIST_SMALL);
-
-    wxButton *p_exportBtn = XRCCTRL(*this, "export_btn", wxButton);
-
-    m_display = XRCCTRL(*this, "wallpaper_display", wxStaticBitmap);
-
-    m_listCtrl->Bind(wxEVT_LIST_ITEM_SELECTED, &WallpapersPanel::onWallpaperSelected, this);
-    p_exportBtn->Bind(wxEVT_BUTTON, &WallpapersPanel::exportWallpaper, this);
+WallpapersPanel::WallpapersPanel(): m_wallpapersController(nullptr) {
 }
 
 // Destructor
@@ -44,6 +30,21 @@ void WallpapersPanel::setWallpapersController(WallpapersController *p_wallpapers
 }
 
 // Instance's methods
+void WallpapersPanel::Init() {
+    m_wallpapersList = new wxImageList(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+
+    m_listCtrl = XRCCTRL(*this, "wallpapers_list", wxListCtrl);
+    m_listCtrl->InsertColumn(0, "", wxLIST_FORMAT_LEFT, THUMBNAIL_SIZE);
+    m_listCtrl->AssignImageList(m_wallpapersList, wxIMAGE_LIST_SMALL);
+
+    wxButton *p_exportBtn = XRCCTRL(*this, "export_btn", wxButton);
+
+    m_display = XRCCTRL(*this, "wallpaper_display", wxStaticBitmap);
+
+    m_listCtrl->Bind(wxEVT_LIST_ITEM_SELECTED, &WallpapersPanel::onWallpaperSelected, this);
+    p_exportBtn->Bind(wxEVT_BUTTON, &WallpapersPanel::exportWallpaper, this);
+}
+
 void WallpapersPanel::onWallpaperGenerated(cv::Mat wallpaper) {
     wxBitmap bmp = createThumbnail(wallpaper, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
 
@@ -68,4 +69,32 @@ void WallpapersPanel::exportWallpaper(wxCommandEvent& event) {
     if(fd.ShowModal() != wxID_CANCEL) {
         m_wallpapersController->exportWallpaper(fd.GetPath().ToStdString(), m_listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED));
     }
+}
+
+
+
+
+wxIMPLEMENT_DYNAMIC_CLASS(WallpapersPanelXmlHandler, wxXmlResourceHandler);
+ 
+WallpapersPanelXmlHandler::WallpapersPanelXmlHandler()
+{
+    AddWindowStyles();
+}
+ 
+wxObject *WallpapersPanelXmlHandler::DoCreateResource()
+{
+    XRC_MAKE_INSTANCE(control, WallpapersPanel)
+ 
+    control->Create(m_parentAsWindow, GetID(), GetPosition(), GetSize(), GetStyle(), GetName());
+    CreateChildren(control);
+    control->Init();
+
+    SetupWindow(control);
+ 
+    return control;
+}
+ 
+bool WallpapersPanelXmlHandler::CanHandle(wxXmlNode *node)
+{
+    return IsOfClass(node, wxT("WallpapersPanel"));
 }

@@ -9,31 +9,13 @@
 #include <vector>
 #include <iostream>
 
+/***
+ * ImagesPanel
+ */
 #define THUMBNAIL_SIZE 300
 
 // Constructors
-ImagesPanel::ImagesPanel(wxWindow *p_parent): m_imagesController(nullptr), m_selectedImage(-1) {
-    wxXmlResource::Get()->LoadPanel(this, p_parent, "images_panel");
-
-    wxButton *p_loadBtn = XRCCTRL(*this, "load_btn", wxButton);
-    p_loadBtn->Bind(wxEVT_BUTTON, &ImagesPanel::loadImages, this);
-    p_loadBtn->SetBackgroundColour(*wxGREEN);
-    p_loadBtn->SetBitmap(wxBitmap("./res/icons/add.png"));
-
-    wxButton *p_deleteAllBtn = XRCCTRL(*this, "delete_all_btn", wxButton);
-    p_deleteAllBtn->Bind(wxEVT_BUTTON, &ImagesPanel::onDeleteAllImages, this);
-    p_deleteAllBtn->SetBackgroundColour(*wxRED);
-    p_deleteAllBtn->SetBitmap(wxBitmap("./res/icons/trash.png"));
-
-    m_imagesList = new wxImageList(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
-    m_listCtrl = XRCCTRL(*this, "images_list", wxListCtrl);
-
-    m_listCtrl->InsertColumn(0, "", wxLIST_FORMAT_LEFT, THUMBNAIL_SIZE);
-    m_listCtrl->AssignImageList(m_imagesList, wxIMAGE_LIST_SMALL);
-
-    m_listCtrl->Bind(wxEVT_LIST_ITEM_SELECTED, &ImagesPanel::onImageSelected, this);
-    m_listCtrl->Bind(wxEVT_CHAR_HOOK, &ImagesPanel::onDeleteImage, this);
-    m_listCtrl->Bind(wxEVT_LIST_BEGIN_DRAG, &ImagesPanel::onDragStart, this);
+ImagesPanel::ImagesPanel(): m_imagesController(nullptr) {
 }
 
 // Destructor
@@ -47,16 +29,31 @@ ImagesController* ImagesPanel::getImagesController() const {
 
 // Setters
 void ImagesPanel::setImagesController(ImagesController *p_imagesController) {
-    if(p_imagesController != nullptr) {
-        if(m_imagesController != nullptr) {
-            m_imagesController->removeImagesListener(this);
-        }
-        m_imagesController = p_imagesController;
-        m_imagesController->addImagesListener(this);
+    if(m_imagesController != nullptr) {
+        m_imagesController->removeImagesListener(this);
     }
+    m_imagesController = p_imagesController;
+    m_imagesController->addImagesListener(this);
 }
 
 // Instance's methods
+void ImagesPanel::Init() {
+    wxButton *p_loadBtn = XRCCTRL(*this, "load_btn", wxButton);
+    p_loadBtn->Bind(wxEVT_BUTTON, &ImagesPanel::loadImages, this);
+
+    wxButton *p_deleteAllBtn = XRCCTRL(*this, "delete_all_btn", wxButton);
+    p_deleteAllBtn->Bind(wxEVT_BUTTON, &ImagesPanel::onDeleteAllImages, this);
+
+    m_imagesList = new wxImageList(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+    m_listCtrl = XRCCTRL(*this, "images_list", wxListCtrl);
+
+    m_listCtrl->InsertColumn(0, "", wxLIST_FORMAT_LEFT, THUMBNAIL_SIZE);
+    m_listCtrl->AssignImageList(m_imagesList, wxIMAGE_LIST_SMALL);
+
+    m_listCtrl->Bind(wxEVT_CHAR_HOOK, &ImagesPanel::onDeleteImage, this);
+    m_listCtrl->Bind(wxEVT_LIST_BEGIN_DRAG, &ImagesPanel::onDragStart, this);
+}
+
 void ImagesPanel::onImageLoaded(Image *p_image) {
     cv::Mat data = p_image->getData();
 
@@ -69,7 +66,6 @@ void ImagesPanel::onImageDeleted(Image image) {
     long id = m_listCtrl->FindItem(0, wxString(std::to_string(image.getId())));
 
     m_listCtrl->DeleteItem(id);
-    m_selectedImage = -1;
 }
 
 // Events handlers
@@ -91,16 +87,18 @@ void ImagesPanel::loadImages(wxCommandEvent& event) {
     }
 }
 
-void ImagesPanel::onImageSelected(wxListEvent& event) {
-    m_selectedImage = std::stoi(event.GetLabel().ToStdString());
-}
-
 void ImagesPanel::onDeleteImage(wxKeyEvent& event) {
-    if(m_selectedImage >= 0 && event.GetKeyCode() == WXK_DELETE) {
+    long selectedIndex = m_listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+    if(selectedIndex >= 0 && event.GetKeyCode() == WXK_DELETE) {
         wxMessageDialog dg(this, "This action will delete the selected image and can't be canceled. Are you sure ?", "", wxYES_NO|wxNO_DEFAULT);
         
         if(dg.ShowModal() == wxID_YES) {
-            m_imagesController->remove(m_selectedImage);
+            wxListItem item;
+            item.SetId(selectedIndex);
+            m_listCtrl->GetItem(item);
+            int imgId;
+            item.GetText().ToInt(&imgId);
+            m_imagesController->remove(imgId);
         }
     }
 }
@@ -114,8 +112,44 @@ void ImagesPanel::onDeleteAllImages(wxCommandEvent& event) {
 }
 
 void ImagesPanel::onDragStart(wxListEvent& event) {
-    wxTextDataObject dragData(std::to_string(m_selectedImage));
+    long selectedIndex = m_listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+    wxListItem item;
+    item.SetId(selectedIndex);
+    m_listCtrl->GetItem(item);
+    int imgId;
+    item.GetText().ToInt(&imgId);
+
+    wxTextDataObject dragData(std::to_string(imgId));
     wxDropSource dragSource(this);
     dragSource.SetData(dragData);
     dragSource.DoDragDrop(wxDrag_CopyOnly);
+}
+
+
+
+
+
+wxIMPLEMENT_DYNAMIC_CLASS(ImagesPanelXmlHandler, wxXmlResourceHandler);
+ 
+ImagesPanelXmlHandler::ImagesPanelXmlHandler()
+{
+    AddWindowStyles();
+}
+ 
+wxObject *ImagesPanelXmlHandler::DoCreateResource()
+{
+    XRC_MAKE_INSTANCE(control, ImagesPanel)
+    
+    control->Create(m_parentAsWindow, GetID(), GetPosition(), GetSize(), GetStyle(), GetName());
+    CreateChildren(control);
+    control->Init();
+ 
+    SetupWindow(control);
+ 
+    return control;
+}
+ 
+bool ImagesPanelXmlHandler::CanHandle(wxXmlNode *node)
+{
+    return IsOfClass(node, wxT("ImagesPanel"));
 }

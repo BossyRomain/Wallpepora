@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resource>
-    <object class="wxPanel" name="wallpapers_panel">
+    <object class="WallpapersPanel" name="wallpapers_panel">
         <object class="wxGridBagSizer">
             <rows>2</rows>
             <cols>2</cols>

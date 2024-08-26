@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resource>
-    <object class="wxPanel" name="grid_editor_panel">
+    <object class="GridEditorPanel" name="grid_editor_panel">
         <object class="wxGridBagSizer">
             <rows>3</rows>
             <cols>1</cols>
             <growablerows>1</growablerows>
             <growablecols>0</growablecols>
             <vgap>10</vgap>
+
+            <object class="sizeritem">
+                <object class="wxScrolledWindow" name="scrolledWindow">
+                    <object class="PaintArea" name="paint_area"/>
+                </object>
+                <cellpos>1, 0</cellpos>
+                <flag>wxEXPAND</flag>
+            </object>
             
             <object class="sizeritem">
                 <object class="wxBoxSizer">
@@ -15,12 +23,33 @@
                     <object class="sizeritem">
                         <object class="wxButton" name="merge_btn">
                             <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
+                            <tooltip>Merge cells</tooltip>
+                            <bitmap default_size="32,32">../icons/merge.svg</bitmap>
                         </object>
                     </object>
 
                     <object class="sizeritem">
                         <object class="wxButton" name="unmerge_btn">
                             <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
+                            <tooltip>Unmerge cells</tooltip>
+                            <bitmap default_size="32,32">../icons/unmerge.svg</bitmap>
+                        </object>
+                    </object>
+
+                    <object class="sizeritem">
+                        <object class="wxStaticText">
+                            <style>wxALIGN_RIGHT</style>
+                            <label>  Zoom: </label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                    </object>
+
+                    <object class="sizeritem">
+                        <object class="wxSlider" name="zoom_slider">
+                            <style>wxSL_VALUE_LABEL</style>
+                            <min>50</min>
+                            <max>200</max>
+                            <value>100</value>
                         </object>
                     </object>
 

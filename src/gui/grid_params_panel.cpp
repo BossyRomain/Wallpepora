@@ -3,17 +3,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Constructors
-GridParamsPanel::GridParamsPanel(wxWindow *p_parent): m_gridController(nullptr) {
-    wxXmlResource::Get()->LoadPanel(this, p_parent, "grid_params_panel");
-
-    m_rowsSpinner = XRCCTRL(*this, "rows_spinner", wxSpinCtrl);
-    m_rowsSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onRowsUpdate, this);
-
-    m_colsSpinner = XRCCTRL(*this, "cols_spinner", wxSpinCtrl);
-    m_colsSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onColsUpdate, this);
-
-    m_cellsSizeSpinner = XRCCTRL(*this, "size_spinner", wxSpinCtrl);
-    m_cellsSizeSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onCellsSizeUpdate, this);
+GridParamsPanel::GridParamsPanel(): m_gridController(nullptr) {
 }
 
 // Destructor
@@ -45,6 +35,17 @@ void GridParamsPanel::setGridEditorPanel(GridEditorPanel *p_gridEditorPanel) {
 }
 
 // Instance's methods
+void GridParamsPanel::Init() {
+    m_rowsSpinner = XRCCTRL(*this, "rows_spinner", wxSpinCtrl);
+    m_rowsSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onRowsUpdate, this);
+
+    m_colsSpinner = XRCCTRL(*this, "cols_spinner", wxSpinCtrl);
+    m_colsSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onColsUpdate, this);
+
+    m_cellsSizeSpinner = XRCCTRL(*this, "size_spinner", wxSpinCtrl);
+    m_cellsSizeSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onCellsSizeUpdate, this);
+}
+
 void GridParamsPanel::onRowsUpdate(wxSpinEvent& event) {
     assert(m_gridController != nullptr);
     assert(m_gridEditorPanel != nullptr);
@@ -80,4 +81,31 @@ void GridParamsPanel::onCellsSizeUpdate(wxSpinEvent& event) {
         m_gridEditorPanel->Refresh();
         m_gridEditorPanel->Update();
     }
+}
+
+
+
+wxIMPLEMENT_DYNAMIC_CLASS(GridParamsPanelXmlHandler, wxXmlResourceHandler);
+ 
+GridParamsPanelXmlHandler::GridParamsPanelXmlHandler()
+{
+    AddWindowStyles();
+}
+ 
+wxObject *GridParamsPanelXmlHandler::DoCreateResource()
+{
+    XRC_MAKE_INSTANCE(control, GridParamsPanel)
+    
+    control->Create(m_parentAsWindow, GetID(), GetPosition(), GetSize(), GetStyle(), GetName());
+    CreateChildren(control);
+    control->Init();
+ 
+    SetupWindow(control);
+ 
+    return control;
+}
+ 
+bool GridParamsPanelXmlHandler::CanHandle(wxXmlNode *node)
+{
+    return IsOfClass(node, wxT("GridParamsPanel"));
 }

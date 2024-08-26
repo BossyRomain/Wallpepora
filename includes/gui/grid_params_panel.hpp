@@ -3,6 +3,8 @@
 
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
+#include <wx/xrc/xh_all.h>
+#include <wx/xrc/xmlres.h>
 #include "controllers/grid_controller.hpp"
 #include "gui/grid_editor_panel.hpp"
 
@@ -16,8 +18,8 @@ class GridParamsPanel: public wxPanel {
 public:
 
     // Constructors
-    GridParamsPanel(wxWindow *p_parent);
-
+    GridParamsPanel();
+    
     // Destructor
     ~GridParamsPanel();
 
@@ -32,6 +34,7 @@ public:
     void setGridEditorPanel(GridEditorPanel *p_gridEditorPanel);
 
     // Instance's methods
+    void Init();
 
 private:
 
@@ -53,5 +56,22 @@ private:
 
     wxSpinCtrl *m_cellsSizeSpinner;
 };
+
+class GridParamsPanelXmlHandler : public wxXmlResourceHandler
+{
+public:
+    // Constructor.
+    GridParamsPanelXmlHandler();
+ 
+    // Creates the control and returns a pointer to it.
+    virtual wxObject *DoCreateResource();
+ 
+    // Returns true if we know how to create a control for the given node.
+    virtual bool CanHandle(wxXmlNode *node);
+ 
+    // Register with wxWidgets' dynamic class subsystem.
+    wxDECLARE_DYNAMIC_CLASS(GridParamsPanelXmlHandler);
+};
+
 
 #endif
