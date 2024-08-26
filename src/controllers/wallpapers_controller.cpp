@@ -12,6 +12,10 @@ WallpapersController::~WallpapersController() {
 }
 
 // Getters
+int WallpapersController::getWallpapersCount() const {
+    return m_wallpapers.size();
+}
+
 cv::Mat WallpapersController::getWallpaper(int id) const {
     return m_wallpapers[id].clone();
 }

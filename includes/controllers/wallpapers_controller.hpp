@@ -20,6 +20,8 @@ public:
     ~WallpapersController();
 
     // Getters
+    int getWallpapersCount() const;
+
     cv::Mat getWallpaper(int id) const;
     
     // Setters

@@ -1,6 +1,7 @@
 #include "cli/commands/show_command.hpp"
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <regex>
 
 // Static variables
 static const std::string S_SEPARATOR = "| ";
@@ -48,6 +49,18 @@ void ShowCmd::execute(CLI *p_cli) {
                 showTiles(p_cli->getGridController());
             } else if(m_args[0] == "-g" || m_args[0] == "--grid") {
                 showGrid(p_cli->getGridController());
+            } else if(std::regex_match(m_args[0], std::regex("--wallpaper=[0-9]+"))) {
+                showWallpaper(p_cli->getWallpapersController(), std::stoi(m_args[0].substr(m_args[0].find_first_of('=') + 1)));
+            } else if(m_args[0] == "--wallpapers") {
+                showWallpapers(p_cli->getWallpapersController());
+            } else {
+                throw std::exception();
+            }
+            break;
+
+        case 2:
+            if(m_args[0] == "-w") {
+                showWallpaper(p_cli->getWallpapersController(), std::stoi(m_args[1]));
             } else {
                 throw std::exception();
             }
@@ -149,4 +162,18 @@ void ShowCmd::showGrid(GridController *p_gridController) {
 
     cv::imshow("Preview", preview);
     cv::waitKey(0);
+}
+
+void ShowCmd::showWallpaper(WallpapersController *p_wallpapersController, int id) {
+    cv::imshow("Wallpaper", p_wallpapersController->getWallpaper(id));
+    cv::waitKey(0);
+}
+
+void ShowCmd::showWallpapers(WallpapersController *p_wallpapersController) {
+    if(p_wallpapersController->getWallpapersCount() == 0) {
+        std::cout << "there is actually no wallpaper" << std::endl;
+    } else {
+        std::cout << "There is actually " << p_wallpapersController->getWallpapersCount() << " wallpapers with ids range from 0 to "
+    << (p_wallpapersController->getWallpapersCount() - 1) << std::endl;
+    }
 }

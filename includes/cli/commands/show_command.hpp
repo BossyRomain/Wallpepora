@@ -30,6 +30,10 @@ private:
 
     void showGrid(GridController *p_gridController);
 
+    void showWallpaper(WallpapersController *p_wallpapersController, int id);
+
+    void showWallpapers(WallpapersController *p_wallpapersController);
+
     // Attributes
     std::vector<std::string> m_args;
 };
