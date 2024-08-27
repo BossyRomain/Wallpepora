@@ -103,7 +103,7 @@ std::vector<std::string> extractsArgs(const std::string& line) {
 }
 
 // Constructors
-CLI::CLI(): m_imagesController(nullptr), m_gridController(nullptr), m_wallpapersController(nullptr) {
+CLI::CLI(): m_imagesController(nullptr), m_gridController(nullptr), m_wallpapersController(nullptr), m_workspaceController(nullptr) {
 }
 
 // Destructor
@@ -123,8 +123,8 @@ WallpapersController* CLI::getWallpapersController() const {
     return m_wallpapersController;
 }
 
-void CLI::setWallpapersController(WallpapersController *p_wallpapersController) {
-    m_wallpapersController = p_wallpapersController;
+WorkspaceController* CLI::getWorkspaceController() const {
+    return m_workspaceController;
 }
 
 // Setters
@@ -136,11 +136,20 @@ void CLI::setGridController(GridController *p_gridController) {
     m_gridController = p_gridController;
 }
 
+void CLI::setWallpapersController(WallpapersController *p_wallpapersController) {
+    m_wallpapersController = p_wallpapersController;
+}
+
+void CLI::setWorkspaceController(WorkspaceController *p_workspaceController) {
+    m_workspaceController = p_workspaceController;
+}
+
 // Instance's methods
 int CLI::run() {
     assert(m_imagesController != nullptr);
     assert(m_gridController != nullptr);
     assert(m_wallpapersController != nullptr);
+    assert(m_workspaceController != nullptr);
 
     bool run = true;
     while(run) {

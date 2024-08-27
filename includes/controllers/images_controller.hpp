@@ -3,6 +3,7 @@
 
 #include "model/images.hpp"
 #include <vector>
+#include <fstream>
 
 /**
  * The listener abstract class to receive images events.
@@ -111,6 +112,20 @@ public:
      * Generates an image event of type onImageDeleted for each image.
      */
     void removeAll();
+
+    /**
+     * Loads the content of a workspace.
+     * 
+     * @param workspace a stream to read from the workspace.
+     */
+    void loadFromWorkspace(std::ifstream& workspace);
+
+    /**
+     * Writes the current state of this controller in a workspace.
+     * 
+     * @param workspace a stream to write in the workspace.
+     */
+    void saveInWorkspace(std::ofstream& workspace);
 
 private:
 

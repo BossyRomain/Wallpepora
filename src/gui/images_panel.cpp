@@ -108,6 +108,7 @@ void ImagesPanel::onDeleteAllImages(wxCommandEvent& event) {
 
     if(dg.ShowModal() == wxID_YES) {
         m_imagesController->removeAll();
+        m_imagesList->RemoveAll();
     }
 }
 

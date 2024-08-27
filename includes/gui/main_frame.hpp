@@ -2,10 +2,7 @@
 #define MAIN_FRAME_HPP
 
 #include <wx/wx.h>
-#include "gui/images_panel.hpp"
-#include "gui/grid_editor_panel.hpp"
-#include "gui/grid_params_panel.hpp"
-#include "gui/wallpapers_panel.hpp"
+#include "controllers/workspace_controller.hpp"
 
 /**
  * The main frame of the GUI.
@@ -20,13 +17,22 @@ public:
     ~MainFrame();
 
     // Getters
+    WorkspaceController* getWorkspaceController() const;
 
     // Setters
+    void setWorkspaceController(WorkspaceController *p_workspaceController);
 
     // Instance's methods
 
 private:
 
+    // Instance's methods
+    void load(wxCommandEvent& event);
+
+    void save(wxCommandEvent& event);
+
+    // Attributes
+    WorkspaceController *m_workspaceController;
 };
 
 #endif

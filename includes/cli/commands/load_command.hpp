@@ -30,6 +30,12 @@ public:
 
 private:
 
+    // Instance's methods
+    void loadImages(ImagesController *p_imagesController);
+    
+    void loadWorkspace(WorkspaceController *p_workspaceController, const std::string& filePath);
+
+    // Attributes
     std::vector<std::string> m_args;
 
     int m_nbImagesLoaded;

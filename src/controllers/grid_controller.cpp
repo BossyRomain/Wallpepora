@@ -1,4 +1,5 @@
 #include "controllers/grid_controller.hpp"
+#include "controllers/workspace_controller.hpp"
 #include <exception>
 #include <random>
 
@@ -135,6 +136,14 @@ bool GridController::setCellsSize(int size) {
 }
 
 // Instance's methods
+void GridController::onImageDeleted(Image image) {
+    for(Tile *p_tile: m_tiles) {
+        if(p_tile->getImage() != nullptr && p_tile->getImage()->getId() == image.getId()) {
+            p_tile->setImage(nullptr);
+        }
+    }
+}
+
 int GridController::merge(int rowMin, int colMin, int rowMax, int colMax) {
     Tile tile(0, rowMin, colMin, rowMax, colMax);
 
@@ -294,4 +303,52 @@ void GridController::clear() {
         delete p_tile;
     }
     m_tiles.clear();
+}
+
+void GridController::loadFromWorkspace(std::ifstream& workspace, ImagesController *p_imagesController) {
+    m_rows = readInt(workspace);
+    m_cols = readInt(workspace);
+    m_size = readInt(workspace);
+
+    int nbTiles = readInt(workspace);
+
+    std::vector<Tile*> tiles;
+    for(int i = 0; i < nbTiles; i++) {
+        int id = readInt(workspace);
+        int rowMin = readInt(workspace);
+        int colMin = readInt(workspace);
+        int rowMax = readInt(workspace);
+        int colMax = readInt(workspace);
+        int imageId = readInt(workspace);
+
+        Tile *p_tile = new Tile(id, rowMin, colMin, rowMax, colMax);
+        if(imageId >= 0) {
+            p_tile->setImage(p_imagesController->getImage(imageId));
+        }
+        tiles.push_back(p_tile);
+    }
+
+    for(Tile *p_tile: m_tiles) {
+        delete p_tile;
+    }
+    m_tiles.clear();
+
+    m_tiles = tiles;
+}
+
+void GridController::saveInWorkspace(std::ofstream& workspace) {
+    writeInt(workspace, m_rows);
+    writeInt(workspace, m_cols);
+    writeInt(workspace, m_size);
+
+    writeInt(workspace, getTilesCount());
+
+    for(Tile *p_tile: m_tiles) {
+        writeInt(workspace, p_tile->getId());
+        writeInt(workspace, p_tile->getRowMin());
+        writeInt(workspace, p_tile->getColMin());
+        writeInt(workspace,  p_tile->getRowMax());
+        writeInt(workspace, p_tile->getColMax());
+        writeInt(workspace, p_tile->getImage() != nullptr ? p_tile->getImage()->getId() : -1);
+    }
 }

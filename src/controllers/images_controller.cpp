@@ -1,4 +1,5 @@
 #include "controllers/images_controller.hpp"
+#include "controllers/workspace_controller.hpp"
 #include <exception>
 #include <array>
 
@@ -163,12 +164,12 @@ void ImagesController::remove(int id) {
     if(i < m_images.size()) {
         // Image successfully removed
         Image image(*m_images[i]);
-        delete m_images[i];
-        m_images.erase(m_images.begin() + i);
 
         for(ImagesListener *p_listener: m_listeners) {
             p_listener->onImageDeleted(image);
         }
+        delete m_images[i];
+        m_images.erase(m_images.begin() + i);
     } else {
         // No image with the given id
         throw std::out_of_range("");
@@ -178,11 +179,56 @@ void ImagesController::remove(int id) {
 void ImagesController::removeAll() {
     for(Image *p_image: m_images) {
         Image image(*p_image);
-        delete p_image;
 
         for(ImagesListener *p_listener: m_listeners) {
             p_listener->onImageDeleted(image);
         }
+        delete p_image;
     }
     m_images.clear();
+}
+
+void ImagesController::loadFromWorkspace(std::ifstream& workspace) {
+    int nbImages = readInt(workspace);
+
+    std::vector<Image*> images;
+    for(int i = 0; i < nbImages; i++) {
+        int id = readInt(workspace);
+        std::string fileName = readStr(workspace);
+
+        int rows = readInt(workspace);
+        int cols = readInt(workspace);
+        int type = readInt(workspace);
+        cv::Mat mat(rows, cols, type);
+
+        workspace.read((char*) mat.data, mat.total() * mat.elemSize());
+
+        Image *p_image = new Image(id, fileName, mat);
+        images.push_back(p_image);
+    }
+
+    removeAll();
+
+    m_images = images;
+    for(Image *p_image: m_images) {
+        for(ImagesListener *p_listener: m_listeners) {
+            p_listener->onImageLoaded(p_image);
+        }
+    }
+}
+
+void ImagesController::saveInWorkspace(std::ofstream& workspace) {
+    writeInt(workspace, getImagesCount());
+
+    for(Image *p_image: m_images) {
+        writeInt(workspace, p_image->getId());
+        writeStr(workspace, p_image->getFileName());
+
+        cv::Mat mat = p_image->getData();
+        writeInt(workspace, mat.rows);
+        writeInt(workspace, mat.cols);
+        writeInt(workspace, mat.type());
+
+        workspace.write((char*) mat.data, mat.total() * mat.elemSize());
+    }
 }

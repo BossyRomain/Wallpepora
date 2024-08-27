@@ -1,6 +1,7 @@
 #include "controllers/images_controller.hpp"
 #include "controllers/grid_controller.hpp"
 #include "controllers/wallpapers_controller.hpp"
+#include "controllers/workspace_controller.hpp"
 #include "cli/cli.hpp"
 #include "gui/main_frame.hpp"
 #include "gui/images_panel.hpp"
@@ -18,7 +19,8 @@
 class App: public wxApp {
 public:
 
-    App(ImagesController *p_imagesController, GridController *p_gridController, WallpapersController *p_wallpapersController);
+    App(ImagesController *p_imagesController, GridController *p_gridController, 
+    WallpapersController *p_wallpapersController, WorkspaceController *p_workspaceController);
 
     bool OnInit() override;
 
@@ -29,15 +31,21 @@ private:
     GridController *m_gridController;
 
     WallpapersController *m_wallpapersController;
+
+    WorkspaceController *m_workspaceController;
 };
 
-App::App(ImagesController *p_imagesController, GridController *p_gridController, WallpapersController *p_wallpapersController): 
-m_imagesController(p_imagesController), m_gridController(p_gridController), m_wallpapersController(p_wallpapersController) {
+App::App(ImagesController *p_imagesController, GridController *p_gridController, 
+WallpapersController *p_wallpapersController, WorkspaceController *p_workspaceController): 
+m_imagesController(p_imagesController), m_gridController(p_gridController), 
+m_wallpapersController(p_wallpapersController), m_workspaceController(p_workspaceController) {
 }
 
 bool App::OnInit() {
     assert(m_imagesController != nullptr);
     assert(m_gridController != nullptr);
+    assert(m_wallpapersController != nullptr);
+    assert(m_workspaceController != nullptr);
 
     wxXmlResource::Get()->InitAllHandlers();
     wxXmlResource::Get()->AddHandler(new ImagesPanelXmlHandler);
@@ -56,6 +64,8 @@ bool App::OnInit() {
     WallpapersPanel *p_wallpapersPanel = XRCCTRL(*p_mainFrame, "wallpapers_panel", WallpapersPanel);
     p_mainFrame->Show(true);
 
+    p_mainFrame->setWorkspaceController(m_workspaceController);
+
     p_imagesPanel->setImagesController(m_imagesController);
 
     p_gridEditorPanel->setGridController(m_gridController);
@@ -73,8 +83,14 @@ int main(int argc, char* argv[]) {
     ImagesController *p_imagesController = new ImagesController();
     GridController *p_gridController = new GridController();
     WallpapersController *p_wallpapersController = new WallpapersController();
+    WorkspaceController *p_workspaceController = new WorkspaceController();
+
+    p_imagesController->addImagesListener(p_gridController);
 
     p_gridController->setWallpapersController(p_wallpapersController);
+
+    p_workspaceController->setImagesController(p_imagesController);
+    p_workspaceController->setGridController(p_gridController);
 
     bool cli = false;
     if(argc == 2) {
@@ -89,10 +105,11 @@ int main(int argc, char* argv[]) {
         cli.setImagesController(p_imagesController);
         cli.setGridController(p_gridController);
         cli.setWallpapersController(p_wallpapersController);
+        cli.setWorkspaceController(p_workspaceController);
         cli.run();
     } else {
         // Launching the application with the gui
-        wxApp::SetInstance(new App(p_imagesController, p_gridController, p_wallpapersController));
+        wxApp::SetInstance(new App(p_imagesController, p_gridController, p_wallpapersController, p_workspaceController));
         wxEntryStart(argc, argv);
 
         // Check if wxApp initialized successfully
@@ -115,4 +132,5 @@ int main(int argc, char* argv[]) {
     delete p_imagesController;
     delete p_gridController;
     delete p_wallpapersController;
+    delete p_workspaceController;
 }

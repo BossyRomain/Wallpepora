@@ -3,13 +3,15 @@
 
 #include "model/tiles.hpp"
 #include "model/images.hpp"
+#include "controllers/images_controller.hpp"
 #include "controllers/wallpapers_controller.hpp"
 #include <vector>
+#include <fstream>
 
 /**
  * The controller used to manages the grid.
  */
-class GridController {
+class GridController: public ImagesListener {
 public:
 
     // Constructors
@@ -88,6 +90,8 @@ public:
     bool setCellsSize(int size);
 
     // Instance's methods
+    void onImageDeleted(Image image) override;
+
     /**
      * Merges multiples cells into a tile. 
      * A tile can be created if it intersects with no other tiles containing more than one cell,
@@ -145,6 +149,20 @@ public:
      * Clears the tiles of the grid.
      */
     void clear();
+
+    /**
+     * Loads the content of a workspace.
+     * 
+     * @param workspace a stream to read from the workspace.
+     */
+    void loadFromWorkspace(std::ifstream& workspace, ImagesController *p_imagesController);
+
+    /**
+     * Writes the current state of this controller in a workspace.
+     * 
+     * @param workspace a stream to write in the workspace.
+     */
+    void saveInWorkspace(std::ofstream& workspace);
 
 private:
 

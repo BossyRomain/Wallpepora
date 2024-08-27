@@ -3,7 +3,7 @@
     <object class="wxFrame" name="main_frame">
         <title>Wallpepora</title>
         <size>800, 500</size>
-
+        
         <object class="wxNotebook">
             <style>wxNB_TOP</style>
 

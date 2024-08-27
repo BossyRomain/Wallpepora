@@ -22,7 +22,15 @@ void LoadCmd::onImageNotLoaded(const std::string& filePath) {
 }
 
 void LoadCmd::execute(CLI *p_cli) {
-    std::vector<std::string> filesPaths;
+    if(m_args.size() == 2 && m_args[0] == "-w") {
+        loadWorkspace(p_cli->getWorkspaceController(), m_args[1]);
+    } else {
+        loadImages(p_cli->getImagesController());
+    }
+}
+
+void LoadCmd::loadImages(ImagesController *p_imagesController) {
+std::vector<std::string> filesPaths;
 
     for(std::string arg: m_args) {
         std::string path = "";
@@ -45,9 +53,18 @@ void LoadCmd::execute(CLI *p_cli) {
 
     const int nbToLoad = filesPaths.size();
     m_nbImagesLoaded = 0;
-    p_cli->getImagesController()->addImagesListener(this);
-    p_cli->getImagesController()->load(filesPaths);
-    p_cli->getImagesController()->removeImagesListener(this);
+    p_imagesController->addImagesListener(this);
+    p_imagesController->load(filesPaths);
+    p_imagesController->removeImagesListener(this);
 
     std::cout << "successfully load " << m_nbImagesLoaded << "/" << nbToLoad << " images" << std::endl;
+}
+
+void LoadCmd::loadWorkspace(WorkspaceController *p_workspaceController, const std::string& filePath) {
+    std::string path = filePath;
+    if(path[0] == '~') {
+        path = std::getenv("HOME") + filePath.substr(1);
+    }
+
+    p_workspaceController->load(path);
 }
