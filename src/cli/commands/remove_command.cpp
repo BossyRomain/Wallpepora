@@ -1,11 +1,9 @@
 #include "cli/commands/remove_command.hpp"
 
 // Constructors
-RemoveCmd::RemoveCmd(int tileId): m_useTileId(true), m_tileId(tileId), m_row(0), m_col(0) {
-}
+RemoveCmd::RemoveCmd(int tileId): m_useTileId(true), m_tileId(tileId), m_row(0), m_col(0) {}
 
-RemoveCmd::RemoveCmd(int row, int col): m_useTileId(false), m_row(row), m_col(col), m_tileId(0) {
-}
+RemoveCmd::RemoveCmd(int row, int col): m_useTileId(false), m_row(row), m_col(col), m_tileId(0) {}
 
 // Destructor
 
@@ -15,6 +13,9 @@ RemoveCmd::RemoveCmd(int row, int col): m_useTileId(false), m_row(row), m_col(co
 
 // Instance's methods
 void RemoveCmd::execute(CLI *p_cli) {
+    assert(p_cli != nullptr);
+    assert(p_cli->getGridController() != nullptr);
+
     if(m_useTileId) {
         p_cli->getGridController()->placeImage(m_tileId, nullptr);
     } else {

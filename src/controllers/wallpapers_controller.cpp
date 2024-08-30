@@ -1,4 +1,5 @@
 #include "controllers/wallpapers_controller.hpp"
+#include <exception>
 
 // Constructors
 WallpapersController::WallpapersController() {
@@ -17,6 +18,9 @@ int WallpapersController::getWallpapersCount() const {
 }
 
 cv::Mat WallpapersController::getWallpaper(int id) const {
+    if(id < 0 || id >= getWallpapersCount()) {
+        throw std::out_of_range("");
+    }
     return m_wallpapers[id].clone();
 }
 

@@ -3,21 +3,26 @@
 #include <exception>
 #include <array>
 
-/**
- * ImagesListener
- */
-void ImagesListener::onImageLoaded(Image *p_image) {
-}
+/******************************************************
+ ******************************************************
+ ***                                                ***
+ ***                 ImagesListener                 ***
+ ***                                                ***
+ ******************************************************
+ ******************************************************/
+void ImagesListener::onImageLoaded(Image *p_image) {}
 
-void ImagesListener::onImageNotLoaded(const std::string& filePath) {
-}
+void ImagesListener::onImageNotLoaded(const std::string& filePath) {}
 
-void ImagesListener::onImageDeleted(Image image) {
-}
+void ImagesListener::onImageDeleted(Image image) {}
 
-/**
- * ImagesController
- */
+/******************************************************
+ ******************************************************
+ ***                                                ***
+ ***                 ImagesController               ***
+ ***                                                ***
+ ******************************************************
+ ******************************************************/
 // Static variables
 /**
  * The array of the supported files extensions.
@@ -47,15 +52,13 @@ bool sameImage(const cv::Mat& img1, const cv::Mat& img2) {
 }
 
 // Constructors
-ImagesController::ImagesController() {
-}
+ImagesController::ImagesController() {}
 
 // Destructor
 ImagesController::~ImagesController() {
     for(Image *p_image: m_images) {
         delete p_image;
     }
-    m_images.clear();
 }
 
 // Getters

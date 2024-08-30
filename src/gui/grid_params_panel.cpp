@@ -2,12 +2,19 @@
 #include <wx/xrc/xh_all.h>
 #include <wx/xrc/xmlres.h>
 
+/******************************************************
+ ******************************************************
+ ***                                                ***
+ ***                 GridParamsPanel                ***
+ ***                                                ***
+ ******************************************************
+ ******************************************************/
 // Constructors
-GridParamsPanel::GridParamsPanel(): m_gridController(nullptr) {
-}
+GridParamsPanel::GridParamsPanel(): m_gridController(nullptr) {}
 
 // Destructor
 GridParamsPanel::~GridParamsPanel() {
+    m_gridController->removeGridListener(this);
 }
 
 // Getters
@@ -15,76 +22,67 @@ GridController* GridParamsPanel::getGridController() const {
     return m_gridController;
 }
 
-GridEditorPanel* GridParamsPanel::getGridEditorPanel() const {
-    return m_gridEditorPanel;
-}
-
 // Setters
 void GridParamsPanel::setGridController(GridController *p_gridController) {
-    m_gridController = p_gridController;
-
     if(m_gridController != nullptr) {
-        m_rowsSpinner->SetValue(m_gridController->getRowsCount());
-        m_colsSpinner->SetValue(m_gridController->getColsCount());
-        m_cellsSizeSpinner->SetValue(m_gridController->getCellsSize());
+        m_gridController->removeGridListener(this);
     }
-}
 
-void GridParamsPanel::setGridEditorPanel(GridEditorPanel *p_gridEditorPanel) {
-    m_gridEditorPanel = p_gridEditorPanel;
+    m_gridController = p_gridController;
+    m_gridController->addGridListener(this);
+
+    m_rowsSpinner->SetValue(m_gridController->getRowsCount());
+    m_colsSpinner->SetValue(m_gridController->getColsCount());
+    m_cellsSizeSpinner->SetValue(m_gridController->getCellsSize());
 }
 
 // Instance's methods
+void GridParamsPanel::onRowsUpdated(int rows) {
+    m_rowsSpinner->SetValue(rows);
+}
+
+void GridParamsPanel::onColsUpdated(int cols) {
+    m_colsSpinner->SetValue(cols);    
+}
+
+void GridParamsPanel::onCellsSizeUpdated(int size) {
+    m_cellsSizeSpinner->SetValue(size);
+}
+
 void GridParamsPanel::Init() {
     m_rowsSpinner = XRCCTRL(*this, "rows_spinner", wxSpinCtrl);
-    m_rowsSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onRowsUpdate, this);
+    m_rowsSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onUpdateRows, this);
 
     m_colsSpinner = XRCCTRL(*this, "cols_spinner", wxSpinCtrl);
-    m_colsSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onColsUpdate, this);
+    m_colsSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onUpdateCols, this);
 
     m_cellsSizeSpinner = XRCCTRL(*this, "size_spinner", wxSpinCtrl);
-    m_cellsSizeSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onCellsSizeUpdate, this);
+    m_cellsSizeSpinner->Bind(wxEVT_SPINCTRL, &GridParamsPanel::onUpdateCellsSize, this);
 }
 
-void GridParamsPanel::onRowsUpdate(wxSpinEvent& event) {
+void GridParamsPanel::onUpdateRows(wxSpinEvent& event) {
     assert(m_gridController != nullptr);
-    assert(m_gridEditorPanel != nullptr);
-
-    if(!m_gridController->setRowsCount(event.GetValue())) {
-        m_rowsSpinner->SetValue(m_gridController->getRowsCount());
-    } else {
-        m_gridEditorPanel->Refresh();
-        m_gridEditorPanel->Update();
-    }
+    m_gridController->setRowsCount(event.GetValue());
 }
 
-void GridParamsPanel::onColsUpdate(wxSpinEvent& event) {
+void GridParamsPanel::onUpdateCols(wxSpinEvent& event) {
     assert(m_gridController != nullptr);
-    assert(m_gridEditorPanel != nullptr);
-
-    if(!m_gridController->setColsCount(event.GetValue())) {
-        m_colsSpinner->SetValue(m_gridController->getColsCount());
-    } else {
-        m_gridEditorPanel->Refresh();
-        m_gridEditorPanel->Update();
-    }
-
+    m_gridController->setColsCount(event.GetValue());
 }
 
-void GridParamsPanel::onCellsSizeUpdate(wxSpinEvent& event) {
+void GridParamsPanel::onUpdateCellsSize(wxSpinEvent& event) {
     assert(m_gridController != nullptr);
-    assert(m_gridEditorPanel != nullptr);
-
-    if(!m_gridController->setCellsSize(event.GetValue())) {
-        m_cellsSizeSpinner->SetValue(m_gridController->getCellsSize());
-    } else {
-        m_gridEditorPanel->Refresh();
-        m_gridEditorPanel->Update();
-    }
+    m_gridController->setCellsSize(event.GetValue());
 }
 
 
-
+/******************************************************
+ ******************************************************
+ ***                                                ***
+ ***          GridParamsPanelXmlHandler             ***
+ ***                                                ***
+ ******************************************************
+ ******************************************************/
 wxIMPLEMENT_DYNAMIC_CLASS(GridParamsPanelXmlHandler, wxXmlResourceHandler);
  
 GridParamsPanelXmlHandler::GridParamsPanelXmlHandler()

@@ -2,8 +2,7 @@
 #include <iostream>
 
 // Constructors
-UnmergeCmd::UnmergeCmd(int id): m_id(id) {
-}
+UnmergeCmd::UnmergeCmd(int id): m_id(id) {}
 
 // Destructor
 
@@ -13,6 +12,9 @@ UnmergeCmd::UnmergeCmd(int id): m_id(id) {
 
 // Instance's methods
 void UnmergeCmd::execute(CLI *p_cli) {
+    assert(p_cli != nullptr);
+    assert(p_cli->getGridController() != nullptr);
+
     try {
         p_cli->getGridController()->unmerge(m_id);
         std::cout << "the tile with the id " << m_id << " has been deleted" << std::endl;

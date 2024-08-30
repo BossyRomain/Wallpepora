@@ -3,6 +3,23 @@
     <object class="wxFrame" name="main_frame">
         <title>Wallpepora</title>
         <size>800, 500</size>
+
+        <object class="wxMenuBar" name="main_menu_bar">
+            <object class="wxMenu">
+                <label>Workspace</label>
+                <help>Workspaces menu</help>
+                <object class="wxMenuItem" name="load_workspace_item">
+                    <label>Load</label>
+                    <help>Loads a workspace</help>
+                    <accel>Ctrl-O</accel>
+                </object>
+                <object class="wxMenuItem" name="save_workspace_item">
+                    <label>Save</label>
+                    <help>Save a workspace</help>
+                    <accel>Ctrl-S</accel>
+                </object>
+            </object>
+        </object>
         
         <object class="wxNotebook">
             <style>wxNB_TOP</style>

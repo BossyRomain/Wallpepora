@@ -19,7 +19,7 @@
 
             <object class="sizeritem">
                 <object class="wxButton" name="export_btn">
-                    <label>export</label>
+                    <label>Export</label>
                 </object>
                 <cellpos>1, 0</cellpos>
                 <flag>wxALL|wxLEFT</flag>

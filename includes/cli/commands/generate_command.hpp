@@ -5,7 +5,9 @@
 #include "cli/commands/command.hpp"
 
 /**
- * The command used by the cli to generates a new wallpaper if possible.
+ * This command generates a new wallpaper if possible.
+ * 
+ * If the generation success, the id of the new wallpaper is shown, else an error message is shown.
  */
 class GenerateCmd: public Command {
 public:
@@ -20,7 +22,7 @@ public:
 
     // Instance's methods
     void execute(CLI *p_cli) override;
-
+    
 private:
 };
 

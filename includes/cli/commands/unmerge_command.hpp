@@ -4,12 +4,17 @@
 #include "cli/commands/command.hpp"
 
 /**
- * The command used by the cli to unmerge a tile into cells using its id.
+ * This command unmerge a tile on the grid using its id.
  */
 class UnmergeCmd: public Command {
 public:
 
     // Constructors
+    /**
+     * Constructs a unmerge command with the specified id.
+     * 
+     * @param id - a tile id.
+     */
     UnmergeCmd(int id);
 
     // Destructor

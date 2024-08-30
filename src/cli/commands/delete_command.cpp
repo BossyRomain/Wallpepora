@@ -1,21 +1,12 @@
 #include "cli/commands/delete_command.hpp"
+#include "cli/cli_utils.hpp"
 #include <iostream>
 #include <exception>
 
-bool confirmAction(const std::string& msg) {
-    std::cout << msg << std::endl;
-    std::string answer;
-    std::getline(std::cin, answer);
-
-    return answer == "y" || answer == "yes";
-}
-
 // Constructors
-DeleteCmd::DeleteCmd(): m_imageId(-1), m_deleteAll(true) {
-}
+DeleteCmd::DeleteCmd(): m_imageId(-1), m_deleteAll(true) {}
 
-DeleteCmd::DeleteCmd(int imageId): m_imageId(imageId), m_deleteAll(false) {
-}
+DeleteCmd::DeleteCmd(int imageId): m_imageId(imageId), m_deleteAll(false) {}
 
 // Destructor
 
@@ -29,6 +20,9 @@ void DeleteCmd::onImageDeleted(Image p_image) {
 }
 
 void DeleteCmd::execute(CLI *p_cli) {
+    assert(p_cli != nullptr);
+    assert(p_cli->getImagesController() != nullptr);
+    
     if(!confirmAction("This action can't be canceled. Are you sure ? (y/n)")) {
         return;
     }

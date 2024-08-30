@@ -6,13 +6,18 @@
 #include <vector>
 
 /**
- * This command loads new images, it accepts files paths (relative or absolute) and directories paths (relative or absolute).
- * When using a directory path, all the elements inside the directory will try to be loaded, even if they are not images files.
+ * This command loads new images, it accepts file paths (relative or absolute) and directory paths (relative or absolute).
+ * When using a directory path, all the elements in the directory will try to be loaded, even if they are not images files.
  */
 class LoadCmd: public Command, public ImagesListener {
 public:
 
     // Constructors
+    /**
+     * Constructs a load command with its arguments.
+     * 
+     * @param args - a list of file paths (relative or absolute) and/or a list of directory paths (relative or absolute).
+     */
     LoadCmd(std::vector<std::string> args);
 
     // Destructor

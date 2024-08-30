@@ -1,5 +1,18 @@
 #include "gui/gui_utils.hpp"
 
+wxBitmap toBmp(cv::Mat mat, int width, int height) {
+    int w = width >= 0 ? width : mat.cols;
+    int h = height >= 0 ? height : mat.rows;
+
+    cv::Mat converted;
+    cv::cvtColor(mat, converted, cv::COLOR_BGR2RGB);
+
+    wxImage img(converted.cols, converted.rows, converted.data, true);
+    img = img.Scale(w, h);
+
+    return wxBitmap(img);
+}
+
 wxBitmap createThumbnail(cv::Mat originalImg, int width, int height) {
     int imgWidth = originalImg.size().width;
     int imgHeight = originalImg.size().height;

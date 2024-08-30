@@ -3,6 +3,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/msgdlg.h>
 #include <opencv2/opencv.hpp>
+#include <cmath>
 
 class DropTarget: public wxDropTarget {
 public:
@@ -43,7 +44,7 @@ wxDragResult DropTarget::OnData(wxCoord x, wxCoord y, wxDragResult ref) {
         wxTextDataObject* textData = dynamic_cast<wxTextDataObject*>(GetDataObject());
         int id = 0;
         if(textData->GetText().ToInt(&id)) {
-            m_parent->onImageDroped(x, y, id);
+            m_parent->onImageDropped(x, y, id);
         }
     }
     return wxDragCopy;
@@ -55,11 +56,12 @@ wxDragResult DropTarget::OnData(wxCoord x, wxCoord y, wxDragResult ref) {
  */
 
 // Constructors
-GridEditorPanel::GridEditorPanel(): m_gridController(nullptr), m_imagesController(nullptr) {
+GridEditorPanel::GridEditorPanel(): m_gridController(nullptr), m_imagesController(nullptr), m_oldRows(0), m_oldCols(0) {
 }
 
 // Destructor
 GridEditorPanel::~GridEditorPanel() {
+    m_gridController->removeGridListener(this);
 }
 
 // Getters
@@ -73,7 +75,13 @@ ImagesController* GridEditorPanel::getImagesController() const {
 
 // Setters
 void GridEditorPanel::setGridController(GridController *p_gridController) {
+    if(m_gridController != nullptr) {
+        m_gridController->removeGridListener(this);
+    }
     m_gridController = p_gridController;
+    m_gridController->addGridListener(this);
+    m_oldRows = m_gridController->getRowsCount();
+    m_oldCols = m_gridController->getColsCount();
     m_paintArea->setGridController(p_gridController);
 }
 
@@ -82,6 +90,42 @@ void GridEditorPanel::setImagesController(ImagesController *p_imagesController) 
 }
 
 // Instance's methods
+void GridEditorPanel::onRowsUpdated(int rows) {
+    if(rows < m_oldRows) {
+        wxPoint p = m_scrolledWindow->GetViewStart();
+        p.y -= (m_oldRows - rows) * 10;
+        m_scrolledWindow->Scroll(p);
+    }
+    m_oldRows = rows;
+    Refresh();
+}
+
+void GridEditorPanel::onColsUpdated(int cols) {
+    if(cols < m_oldCols) {
+        wxPoint p = m_scrolledWindow->GetViewStart();
+        p.x -= (m_oldCols - cols) * 10;
+        m_scrolledWindow->Scroll(p);
+    }
+    m_oldCols = cols;
+    Refresh();
+}
+
+void GridEditorPanel::onCellsSizeUpdated(int size) {
+    Refresh();
+}
+
+void GridEditorPanel::onTileCreated(const Tile *p_tile) {
+    Refresh();
+}
+
+void GridEditorPanel::onTileDeleted(Tile tile) {
+    Refresh();
+}
+
+void GridEditorPanel::onImagePlaced(const Tile *p_tile, const Image *p_image) {
+    Refresh();
+}
+
 void GridEditorPanel::Init() {
     m_scrolledWindow = XRCCTRL(*this, "scrolledWindow", wxScrolledWindow);
     m_scrolledWindow->SetScrollRate(10, 10);
@@ -89,37 +133,28 @@ void GridEditorPanel::Init() {
 
     m_paintArea = XRCCTRL(*this, "paint_area", GridPainter);
     m_paintArea->Bind(wxEVT_PAINT, &GridPainter::onPaint, m_paintArea);
-    wxButton *mergeBtn = XRCCTRL(*this, "merge_btn", wxButton);
-    wxButton *unmergeBtn = XRCCTRL(*this, "unmerge_btn", wxButton);
-    wxButton *generateBtn = XRCCTRL(*this, "generate_btn", wxButton);
-    wxSlider *p_zoomSlider = XRCCTRL(*this, "zoom_slider", wxSlider);
-    wxButton *p_fillSoftBtn = XRCCTRL(*this, "fill_soft_btn", wxButton);
-    wxButton *p_fillHardBtn = XRCCTRL(*this, "fill_hard_btn", wxButton);
-    wxButton *p_clearBtn = XRCCTRL(*this, "clear_btn", wxButton);
-
     m_paintArea->Bind(wxEVT_LEFT_DOWN, &GridEditorPanel::onSelectionBegin, this);
     m_paintArea->Bind(wxEVT_LEFT_UP, &GridEditorPanel::onSelectionEnd, this);
 
+    wxToolBar *p_toolbar = XRCCTRL(*this, "toolbar", wxToolBar);
+    p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::merge, this, XRCID("merge_btn"));
+    p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::unmerge, this, XRCID("unmerge_btn"));
+    p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::onZoomIn, this, XRCID("zoom_in_btn"));
+    p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::onZoomOut, this, XRCID("zoom_out_btn"));
+    p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::onFillSoft, this, XRCID("fill_soft_btn"));
+    p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::onFillHard, this, XRCID("fill_hard_btn"));
+    p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::onResetGrid, this, XRCID("reset_grid_btn"));
+
+    wxButton *p_generateBtn = XRCCTRL(*this, "generate_btn", wxButton);
+    p_generateBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::generate, this);
+
     Bind(wxEVT_PAINT, &GridEditorPanel::sizedScrolledWindow, this);
-    mergeBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::merge, this);
-    unmergeBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::unmerge, this);
-    generateBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::generate, this);
-    p_zoomSlider->Bind(wxEVT_SLIDER, &GridEditorPanel::onZoom, this);
-    p_fillSoftBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::onFillSoft, this);
-    p_fillHardBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::onFillHard, this);
-    p_clearBtn->Bind(wxEVT_BUTTON, &GridEditorPanel::onClearGrid, this);
 
     SetDropTarget(new DropTarget(this));
 }
 
 void GridEditorPanel::sizedScrolledWindow(wxPaintEvent& event) {
-    assert(m_gridController != nullptr);
-
-    wxSize virtualSize(
-        m_gridController->getColsCount() * m_paintArea->getCellsSize(), 
-        m_gridController->getRowsCount() * m_paintArea->getCellsSize()
-        );
-    m_scrolledWindow->SetVirtualSize(virtualSize);
+    m_scrolledWindow->SetVirtualSize(m_paintArea->GetClientSize());
 }
 
 void GridEditorPanel::onSelectionBegin(wxMouseEvent& event) {
@@ -144,23 +179,20 @@ void GridEditorPanel::onSelectionEnd(wxMouseEvent& event) {
 
         m_paintArea->setSelectedTile(m_gridController->getTileAt(row, col));
     }
-    m_paintArea->Refresh();
 }
 
-void GridEditorPanel::onImageDroped(wxCoord x, wxCoord y, int image_id) {
+void GridEditorPanel::onImageDropped(wxCoord x, wxCoord y, int image_id) {
     wxPoint clientPos = m_scrolledWindow->CalcUnscrolledPosition(wxPoint(x, y));
     int row = clientPos.y / m_paintArea->getCellsSize();
     int col = clientPos.x / m_paintArea->getCellsSize();
 
     m_gridController->placeImage(row, col, m_imagesController->getImage(image_id));
-    Refresh();
 }
 
 void GridEditorPanel::onMouseMotion(wxMouseEvent& event) {
     wxRect selectionRect(m_startSelection, event.GetPosition());
     if(selectionRect.GetWidth() > 10 || selectionRect.GetHeight() > 10) {
         m_paintArea->setSelecRect(selectionRect);
-        Refresh();
     }
 }
 
@@ -176,14 +208,12 @@ void GridEditorPanel::merge(wxCommandEvent& event) {
     m_paintArea->setSelecRect(S_NO_SELECTION);
 
     m_gridController->merge(rowMin, colMin, rowMax, colMax);
-    Refresh();
 }
 
 void GridEditorPanel::unmerge(wxCommandEvent& event) {
     if(m_paintArea->getSelectedTile() != nullptr) {
         m_gridController->unmerge(m_paintArea->getSelectedTile()->getId());
         m_paintArea->setSelectedTile(nullptr);
-        Refresh();
     }
 }
 
@@ -191,38 +221,46 @@ void GridEditorPanel::generate(wxCommandEvent& event) {
     m_gridController->generate();
 }
 
-void GridEditorPanel::onZoom(wxCommandEvent& event) {
-    wxSlider *p_zoomSlider = XRCCTRL(*this, "zoom_slider", wxSlider);
-    float zoom;
-    if(p_zoomSlider->GetValue() > 100) {
-        zoom = (p_zoomSlider->GetValue() - 100 * 1.0f) / (p_zoomSlider->GetMax() - 100) + 1.0f;
-    } else {
-        zoom = ((p_zoomSlider->GetValue() - p_zoomSlider->GetMin() * 1.0f) / 100) + 0.5f;
-    }
+void GridEditorPanel::onZoomIn(wxCommandEvent& event) {
+    float zoom = m_paintArea->getZoom();
+    zoom += 0.05f;
 
-    if(zoom < m_paintArea->getZoom()) {
-        m_scrolledWindow->Scroll(0, 0);
+    if(zoom > 2.0f) {
+        zoom = 2.0f;
     }
+    
+    m_paintArea->setZoom(zoom);
+}
+
+void GridEditorPanel::onZoomOut(wxCommandEvent& event) {
+    float zoom = m_paintArea->getZoom();
+    zoom -= 0.05f;
+
+    if(zoom < 0.5f) {
+        zoom = 0.5f;
+    }   
 
     m_paintArea->setZoom(zoom);
-    Refresh();
+
+    int scrollX, scrollY;
+    m_scrolledWindow->GetScrollPixelsPerUnit(&scrollX, &scrollY);
+    int x = m_scrolledWindow->GetScrollPos(wxHORIZONTAL) - static_cast<int>(zoom * scrollX);
+    int y = m_scrolledWindow->GetScrollPos(wxVERTICAL) - static_cast<int>(zoom * scrollY);
+    m_scrolledWindow->Scroll(x, y);
 }
 
 void GridEditorPanel::onFillSoft(wxCommandEvent& event) {
     m_gridController->fill(m_imagesController->getImages(), false);
-    Refresh();
 }
 
 void GridEditorPanel::onFillHard(wxCommandEvent& event)  {
     m_gridController->fill(m_imagesController->getImages(), true);
-    Refresh();
 }
 
-void GridEditorPanel::onClearGrid(wxCommandEvent& event) {
+void GridEditorPanel::onResetGrid(wxCommandEvent& event) {
     wxMessageDialog dg(this, "This action will reset the grid and can't be canceled. Are you sure ?", "", wxYES_NO|wxNO_DEFAULT);
     if(dg.ShowModal() == wxID_YES) {
         m_gridController->clear();
-        Refresh();
     }
 }
 

@@ -23,12 +23,10 @@ std::string fillVoid(const std::string& str, int maxLength) {
     } else {
         return "";
     }
-
 }
 
 // Constructors
-ShowCmd::ShowCmd(std::vector<std::string> args): m_args(args) {
-}
+ShowCmd::ShowCmd(std::vector<std::string> args): m_args(args) {}
 
 // Destructor
 
@@ -38,6 +36,11 @@ ShowCmd::ShowCmd(std::vector<std::string> args): m_args(args) {
 
 // Instance's methods
 void ShowCmd::execute(CLI *p_cli) {
+    assert(p_cli != nullptr);
+    assert(p_cli->getImagesController() != nullptr);
+    assert(p_cli->getGridController() != nullptr);
+    assert(p_cli->getWallpapersController() != nullptr);
+
     try {
         switch (m_args.size())
         {
@@ -75,6 +78,8 @@ void ShowCmd::execute(CLI *p_cli) {
 }
 
 void ShowCmd::showImages(ImagesController *p_imagesController) {
+    assert(p_imagesController != nullptr);
+
     Image *p_lastImage = p_imagesController->getImagesCount() > 0 ? p_imagesController->getImages()[p_imagesController->getImagesCount() - 1]: nullptr;
 
     const int NB_SPACES_ID = p_lastImage != nullptr ? std::to_string(p_lastImage->getId()).length() : 2;
@@ -102,6 +107,8 @@ void ShowCmd::showImages(ImagesController *p_imagesController) {
 }
 
 void ShowCmd::showTiles(GridController *p_gridController) {
+    assert(p_gridController != nullptr);
+
     const int NB_SPACES = p_gridController->getTilesCount() > 0 ? 
     std::to_string(p_gridController->getTiles()[p_gridController->getTilesCount() - 1].getId()).length() + 1 
     : 2;
@@ -131,6 +138,8 @@ void ShowCmd::showTiles(GridController *p_gridController) {
 }
 
 void ShowCmd::showGrid(GridController *p_gridController) {
+    assert(p_gridController != nullptr);
+
     cv::Mat preview(
         cv::Size(
             p_gridController->getColsCount() * p_gridController->getCellsSize(), 
@@ -165,11 +174,19 @@ void ShowCmd::showGrid(GridController *p_gridController) {
 }
 
 void ShowCmd::showWallpaper(WallpapersController *p_wallpapersController, int id) {
-    cv::imshow("Wallpaper", p_wallpapersController->getWallpaper(id));
-    cv::waitKey(0);
+    assert(p_wallpapersController != nullptr);
+
+    try {
+        cv::imshow("Wallpaper", p_wallpapersController->getWallpaper(id));
+        cv::waitKey(0);
+    } catch(std::out_of_range e) {
+        std::cout << "there is no wallpaper with the id " << id << std::endl;
+    }
 }
 
 void ShowCmd::showWallpapers(WallpapersController *p_wallpapersController) {
+    assert(p_wallpapersController != nullptr);
+
     if(p_wallpapersController->getWallpapersCount() == 0) {
         std::cout << "there is actually no wallpaper" << std::endl;
     } else {

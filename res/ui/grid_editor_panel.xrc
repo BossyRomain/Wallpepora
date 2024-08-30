@@ -17,78 +17,41 @@
             </object>
             
             <object class="sizeritem">
-                <object class="wxBoxSizer">
-                    <orient>wxHORIZONTAL</orient>
-
-                    <object class="sizeritem">
-                        <object class="wxButton" name="merge_btn">
-                            <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
-                            <tooltip>Merge cells</tooltip>
-                            <bitmap default_size="32,32">../icons/merge.svg</bitmap>
-                        </object>
-                        <flag>wxRIGHT</flag>
-                        <border>10</border>
+                <object class="wxToolBar" name="toolbar">
+                    <object class="tool" name="merge_btn">
+                        <bitmap default_size="32,32">../icons/merge.svg</bitmap>
+                        <toggle>1</toggle>
+                        <tooltip>Merge cells into tile</tooltip>
                     </object>
 
-                    <object class="sizeritem">
-                        <object class="wxButton" name="unmerge_btn">
-                            <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
-                            <tooltip>Unmerge cells</tooltip>
-                            <bitmap default_size="32,32">../icons/unmerge.svg</bitmap>
-                        </object>
-                        <flag>wxRIGHT</flag>
-                        <border>10</border>
+                    <object class="tool" name="unmerge_btn">
+                        <bitmap default_size="32,32">../icons/unmerge.svg</bitmap>
+                        <tooltip>Destroy a tile into cells</tooltip>
+                    </object>
+                    <object class="separator"/>
+                    <object class="tool" name="fill_soft_btn">
+                        <bitmap default_size="32,32">../icons/random_soft.svg</bitmap>
+                        <tooltip>Places an image into every empty cell or empty tile</tooltip>
                     </object>
 
-                    <object class="sizeritem">
-                        <object class="wxStaticText">
-                            <style>wxALIGN_RIGHT</style>
-                            <label>Zoom: </label>
-                        </object>
-                        <flag>wxBOTTOM|wxALIGN_BOTTOM</flag>
-                        <border>7</border>
+                    <object class="tool" name="fill_hard_btn">
+                        <bitmap default_size="32,32">../icons/random_hard.svg</bitmap>
+                        <tooltip>Places an image into every cell or tile</tooltip>
                     </object>
-
-                    <object class="sizeritem">
-                        <object class="wxSlider" name="zoom_slider">
-                            <style>wxSL_VALUE_LABEL</style>
-                            <min>50</min>
-                            <max>200</max>
-                            <value>100</value>
-                        </object>
-                        <flag>wxRIGHT</flag>
-                        <border>10</border>
+                    <object class="separator"/>
+                    <object class="tool" name="zoom_in_btn">
+                        <bitmap default_size="32,32">../icons/zoom_in.svg</bitmap>
+                        <tooltip>Zoom in</tooltip>
                     </object>
-
-                    <object class="sizeritem">
-                        <object class="wxButton" name="fill_soft_btn">
-                            <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
-                            <tooltip>Fill empty cells randomly</tooltip>
-                            <bitmap default_size="32,32">../icons/random_soft.svg</bitmap>
-                        </object>
-                        <flag>wxRIGHT</flag>
-                        <border>10</border>
+                    <object class="tool" name="zoom_out_btn">
+                        <bitmap default_size="32,32">../icons/zoom_out.svg</bitmap>
+                        <tooltip>Zoom out</tooltip>
                     </object>
-
-                    <object class="sizeritem">
-                        <object class="wxButton" name="fill_hard_btn">
-                            <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
-                            <tooltip>Fill every cells randomly</tooltip>
-                            <bitmap default_size="32,32">../icons/random_hard.svg</bitmap>
-                        </object>
-                        <flag>wxRIGHT</flag>
-                        <border>10</border>
+                    <object class="separator"/>
+                    <object class="tool" name="reset_grid_btn">
+                        <bitmap default_size="32,32">../icons/reset.svg</bitmap>
+                        <tooltip>Reset the grid to its default settings</tooltip>
                     </object>
-                    
-                    <object class="sizeritem">
-                        <object class="wxButton" name="clear_btn">
-                            <style>wxBU_EXACTFIT|wxBU_NOTEXT</style>
-                            <tooltip>Reset the grid</tooltip>
-                            <bitmap default_size="32,32">../icons/reset.svg</bitmap>
-                            <bg>#FF0000</bg>
-                        </object>
-                    </object>
-
                 </object>
                 <cellpos>0, 0</cellpos>
             </object>

@@ -6,15 +6,17 @@
 class CLI;
 
 /**
- * The interface implemented by every commands used by the CLI.
+ * The interface implemented by every command used by the CLI.
+ * 
+ * Each command need to implement the pure virtual method execute.
  */
 class Command {
 public:
 
     /**
-     * Executes the command.
+     * The method used by the CLI to executes the command.
      * 
-     * @param p_cli a pointer to the CLI's object that calls this method.
+     * @param p_cli a pointer of the CLI's object that calls this method.
      */
     virtual void execute(CLI *p_cli) =0;
 };

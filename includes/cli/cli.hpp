@@ -10,7 +10,8 @@
 class Command;
 
 /**
- * The class used for the CLI. It reads user commands on the standard input, process them and executes them.
+ * The class used for the CLI. 
+ * It reads user commands on the standard input, process them and executes them.
  */
 class CLI {
 public:

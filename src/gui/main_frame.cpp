@@ -6,16 +6,8 @@
 MainFrame::MainFrame(): m_workspaceController(nullptr) {
     wxXmlResource::Get()->LoadFrame(this, nullptr, "main_frame");
 
-    wxMenuBar *p_menuBar = new wxMenuBar();
-    wxMenu *p_menu = new wxMenu();
-    p_menu->Append(wxID_OPEN, "Load");
-    p_menu->Append(wxID_SAVE, "Save");
-
-    p_menuBar->Append(p_menu, "Workspace");
-    SetMenuBar(p_menuBar);
-
-    Bind(wxEVT_MENU, &MainFrame::load, this, wxID_OPEN);
-    Bind(wxEVT_MENU, &MainFrame::save, this, wxID_SAVE);
+    Bind(wxEVT_MENU, &MainFrame::load, this, XRCID("load_workspace_item"));
+    Bind(wxEVT_MENU, &MainFrame::save, this, XRCID("save_workspace_item"));
 
     Maximize(true);
 }

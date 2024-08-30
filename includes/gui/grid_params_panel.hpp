@@ -14,7 +14,7 @@
  * - to change the number of columns of the grid
  * - to change the size of cells of the grid
  */
-class GridParamsPanel: public wxPanel {
+class GridParamsPanel: public wxPanel, public GridListener {
 public:
 
     // Constructors
@@ -26,29 +26,29 @@ public:
     // Getters
     GridController* getGridController() const;
 
-    GridEditorPanel* getGridEditorPanel() const;
-
     // Setters
     void setGridController(GridController *p_gridController);
 
-    void setGridEditorPanel(GridEditorPanel *p_gridEditorPanel);
-
     // Instance's methods
+    void onRowsUpdated(int rows) override;
+
+    void onColsUpdated(int cols) override;
+
+    void onCellsSizeUpdated(int size) override;
+
     void Init();
 
 private:
 
     // Instance's methods
-    void onRowsUpdate(wxSpinEvent& event);
+    void onUpdateRows(wxSpinEvent& event);
 
-    void onColsUpdate(wxSpinEvent& event);
+    void onUpdateCols(wxSpinEvent& event);
 
-    void onCellsSizeUpdate(wxSpinEvent& event);
+    void onUpdateCellsSize(wxSpinEvent& event);
 
     // Attributes
     GridController *m_gridController;
-
-    GridEditorPanel *m_gridEditorPanel;
 
     wxSpinCtrl *m_rowsSpinner;
     

@@ -32,8 +32,18 @@ public:
     void setGridController(GridController *p_gridController);
 
     // Instance's methods
+    /**
+     * Loads a workspace from a file path.
+     * 
+     * @param filePath a workspace's file path.
+     */
     void load(const std::string& filePath);
-    
+
+    /**
+     * Saves the current application's state in a workspace.
+     * 
+     * @param filePath a file path.
+     */
     void save(const std::string& filePath);
 
 private:

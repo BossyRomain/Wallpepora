@@ -59,10 +59,10 @@ public:
     int getImagesCount() const;
 
     /**
-     * Returns the image with the id given in parameter, else nullptr.
+     * Returns the image with the specified id, else nullptr.
      * 
      * @param id an image id.
-     * @return a pointer to the image with the same id, else nullptr.
+     * @return a pointer to the image with the specified id, else nullptr.
      */
     Image* getImage(int id) const;
 
@@ -86,13 +86,13 @@ public:
     /**
      * Unregisters an already registered object implementing the ImagesListener class to stop receiving images events from this object.
      * 
-     * @param p_imagesListener a pointer of the object to unregistered.
+     * @param p_imagesListener a pointer of the object to unregister.
      */
     void removeImagesListener(ImagesListener *p_imagesListener);
 
     /**
-     * Loads new images, generates an image event of type onImageLoaded for each image successfully loaded,
-     * else generates an image event of type onImageNotLoaded.
+     * Loads new images, generates an onImageLoaded event for each image successfully loaded,
+     * else generates an onImageNotLoaded event.
      * 
      * @param filesPaths the list of the files paths (relative or absolute) of the images to load.
      */
@@ -100,8 +100,8 @@ public:
 
     /**
      * Deletes an image loaded in this object using its id. 
-     * Raise an out_of_range exception if the id given in parameter does not correspond to any image.
-     * Generates an image event of type onImageDeleted if the image has been deleted.
+     * Raise an out_of_range exception if there no image with the specified id.
+     * Generates an onImageDeleted event if the image has been deleted.
      * 
      * @param id an image id.
      */
@@ -109,7 +109,7 @@ public:
 
     /**
      * Deletes every image loaded in this object. 
-     * Generates an image event of type onImageDeleted for each image.
+     * Generates an onImageDeleted event for each image.
      */
     void removeAll();
 

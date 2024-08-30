@@ -14,7 +14,7 @@
  * - to unmerge tiles into cells
  * - to place images in the tile on the grid
  */
-class GridEditorPanel: public wxPanel {
+class GridEditorPanel: public wxPanel, public GridListener {
 public:
 
     // Constructors
@@ -34,6 +34,18 @@ public:
     void setImagesController(ImagesController *p_imagesController);
 
     // Instance's methods
+    void onRowsUpdated(int rows) override;
+
+    void onColsUpdated(int cols) override;
+
+    void onCellsSizeUpdated(int size) override;
+
+    void onTileCreated(const Tile *p_tile) override;
+
+    void onTileDeleted(Tile tile) override;
+
+    void onImagePlaced(const Tile *p_tile, const Image *p_image) override;
+
     void Init();
 
     /**
@@ -49,7 +61,7 @@ public:
     /**
      * Invoked when the user drops an image on the grid.
      */
-    void onImageDroped(wxCoord x, wxCoord y, int image_id);
+    void onImageDropped(wxCoord x, wxCoord y, int image_id);
 
 private:
     // Instance's methods
@@ -80,9 +92,14 @@ private:
     void generate(wxCommandEvent& event);
 
     /**
-     * Invoked when the user changes the zoom.
+     * Invoked when the user clicks on the zoom in button.
      */
-    void onZoom(wxCommandEvent& event);
+    void onZoomIn(wxCommandEvent& event);
+
+    /**
+     * Invoked when the user clicks on the zoom out button.
+     */
+    void onZoomOut(wxCommandEvent& event);
 
     /**
      * Invoked when the user clicks on the button to fill the empty cells.
@@ -95,9 +112,9 @@ private:
     void onFillHard(wxCommandEvent& event);
 
     /**
-     * Invoked when the user clicks on the button to clear the grid.
+     * Invoked when the user clicks on the button to reset the grid.
      */
-    void onClearGrid(wxCommandEvent& event);
+    void onResetGrid(wxCommandEvent& event);
     
     // Attributes
     GridController *m_gridController;
@@ -111,6 +128,10 @@ private:
     wxPoint m_startSelection;
 
     wxPoint m_endSelection;
+
+    int m_oldRows;
+
+    int m_oldCols;
 };
 
 class GridEditorPanelXmlHandler : public wxXmlResourceHandler

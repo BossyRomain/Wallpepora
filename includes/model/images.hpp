@@ -5,7 +5,8 @@
 #include <opencv2/opencv.hpp>
 
 /**
- * Describe a source image. Each Image's object is identified with an integer.
+ * Describes a source image.
+ * Each Image's object is identified with an integer.
  */
 class Image {
 public:
@@ -46,9 +47,9 @@ public:
     std::string getFileName() const;
 
     /**
-     * Returns a copy of the pixels values of the image.
+     * Returns a copy of the image's data.
      * 
-     * @returns a copy of the pixels values of the image.
+     * @returns a copy of the image's data.
      */
     cv::Mat getData() const;
 

@@ -12,13 +12,14 @@ const static wxRect S_NO_SELECTION(wxPoint(-1, -1), wxSize(0, 0));
  * Draw the current state of the grid inside the GUI.
  * Also draw other elements like the rectangle of selection when the user selects cells to merge.
  */
-class GridPainter: public wxPanel {
+class GridPainter: public wxPanel, public GridListener {
 public:
 
     // Constructors
     GridPainter();
 
     // Destructor
+    ~GridPainter();
 
     // Getters
     GridController* getGridController() const;
@@ -41,6 +42,20 @@ public:
     void setZoom(float zoom);
 
     // Instance's methods
+    void onRowsUpdated(int rows) override;
+
+    void onColsUpdated(int cols) override;
+
+    void onCellsSizeUpdated(int size) override;
+
+    void onTileCreated(const Tile *p_tile) override;
+
+    void onTileResized(const Tile *p_tile) override;
+
+    void onTileDeleted(Tile tile) override;
+
+    void onImagePlaced(const Tile *p_tile, const Image *p_image) override;
+
     /**
      * Invoked when the GUI is refreshed.
      */
@@ -52,7 +67,7 @@ private:
     /**
      * Draws a tile.
      */
-    void drawTile(wxPaintDC& dc, const Tile& tile);
+    void drawTile(wxPaintDC& dc, wxPoint pos, wxBitmap tile);
 
     /**
      * Draws a cell.
@@ -67,6 +82,8 @@ private:
     const Tile *m_selectedTile;
 
     float m_zoom;
+
+    wxBitmap m_bmp;
 };
 
 class GridPainterXmlHandler : public wxXmlResourceHandler

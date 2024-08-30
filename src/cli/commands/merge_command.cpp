@@ -14,6 +14,9 @@ m_rowMin(rowMin), m_colMin(colMin), m_rowMax(rowMax), m_colMax(colMax) {
 
 // Instance's methods
 void MergeCmd::execute(CLI *p_cli) {
+    assert(p_cli != nullptr);
+    assert(p_cli->getGridController() != nullptr);
+
     int id = p_cli->getGridController()->merge(m_rowMin, m_colMin, m_rowMax, m_colMax);
     if(id >= 0) {
         std::cout << "new tile created with the id " << id << std::endl;

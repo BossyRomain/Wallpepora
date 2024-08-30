@@ -3,8 +3,7 @@
 namespace fs = std::filesystem;
 
 // Constructors
-LoadCmd::LoadCmd(std::vector<std::string> args): m_args(args) {
-}
+LoadCmd::LoadCmd(std::vector<std::string> args): m_args(args) {}
 
 // Destructor
 
@@ -22,6 +21,10 @@ void LoadCmd::onImageNotLoaded(const std::string& filePath) {
 }
 
 void LoadCmd::execute(CLI *p_cli) {
+    assert(p_cli != nullptr);
+    assert(p_cli->getImagesController() != nullptr);
+    assert(p_cli->getWorkspaceController() != nullptr);
+
     if(m_args.size() == 2 && m_args[0] == "-w") {
         loadWorkspace(p_cli->getWorkspaceController(), m_args[1]);
     } else {
@@ -30,7 +33,8 @@ void LoadCmd::execute(CLI *p_cli) {
 }
 
 void LoadCmd::loadImages(ImagesController *p_imagesController) {
-std::vector<std::string> filesPaths;
+    assert(p_imagesController != nullptr);
+    std::vector<std::string> filesPaths;
 
     for(std::string arg: m_args) {
         std::string path = "";
@@ -61,6 +65,7 @@ std::vector<std::string> filesPaths;
 }
 
 void LoadCmd::loadWorkspace(WorkspaceController *p_workspaceController, const std::string& filePath) {
+    assert(p_workspaceController != nullptr);
     std::string path = filePath;
     if(path[0] == '~') {
         path = std::getenv("HOME") + filePath.substr(1);

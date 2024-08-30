@@ -2,8 +2,7 @@
 #include <iostream>
 
 // Constructors
-ExportCmd::ExportCmd(int id, const std::string& filePath): m_id(id), m_filePath(filePath) {
-}
+ExportCmd::ExportCmd(int id, const std::string& filePath): m_id(id), m_filePath(filePath) {}
 
 // Destructor
 
@@ -13,6 +12,9 @@ ExportCmd::ExportCmd(int id, const std::string& filePath): m_id(id), m_filePath(
 
 // Instance's methods
 void ExportCmd::execute(CLI *p_cli) {
+    assert(p_cli != nullptr);
+    assert(p_cli->getWallpapersController() != nullptr);
+
     if(p_cli->getWallpapersController()->exportWallpaper(m_filePath, m_id)) {
         std::cout << "the wallpaper with the id " << m_id << " has been successfully export in the file " << m_filePath << std::endl;
     } else {

@@ -5,17 +5,23 @@
 #include "controllers/images_controller.hpp"
 
 /**
- * This command remove one image using its id or every loaded images.
+ * This command removes one image using its id or all loaded images.
  * 
- * When removing one image using its id, an error message is showed if the id given is not 
- * the id of an existing image.
+ * When removing one image using its id, an error message is shown if there is no image
+ * with the specified id.
  */
 class DeleteCmd: public Command, public ImagesListener {
 public:
 
     // Constructors
+    /**
+     * Constructs a delete command to delete all loaded images.
+     */
     DeleteCmd();
 
+    /**
+     * Constructs a delete command to delete one image using its id.
+     */
     DeleteCmd(int imageId);
 
     // Destructor

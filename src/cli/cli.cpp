@@ -103,12 +103,10 @@ std::vector<std::string> extractsArgs(const std::string& line) {
 }
 
 // Constructors
-CLI::CLI(): m_imagesController(nullptr), m_gridController(nullptr), m_wallpapersController(nullptr), m_workspaceController(nullptr) {
-}
+CLI::CLI(): m_imagesController(nullptr), m_gridController(nullptr), m_wallpapersController(nullptr), m_workspaceController(nullptr) {}
 
 // Destructor
-CLI::~CLI() {
-}
+CLI::~CLI() {}
 
 // Getters
 ImagesController* CLI::getImagesController() const {
@@ -160,61 +158,54 @@ int CLI::run() {
         std::vector<std::string> args = extractsArgs(line);
 
         Command *p_cmd = nullptr;
-        switch (cmd)
-        {
-        case EXIT:
-            run = false;
-            break;
-        
-        case LOAD:
-            p_cmd = new LoadCmd(args);
-            break;
+        try {
+            switch (cmd)
+            {
+            case EXIT:
+                run = false;
+                break;
+            
+            case LOAD:
+                p_cmd = new LoadCmd(args);
+                break;
 
-        case DELETE:
-            if(args.empty()) {
-                std::cout << "invalid command, use:\n delete --all: to delete all the images\n delete id: to delete one image using its id" << std::endl;
-            } else if(args[0] == "--all") {
-                p_cmd = new DeleteCmd();
-            } else {
-                try {
-                    p_cmd = new DeleteCmd(std::stoi(args[0]));
-                } catch(...) {
-                    std::cout << args[0] << "is not a valid image id" << std::endl;
+            case DELETE:
+                if(args.empty()) {
+                    std::cout << "invalid command" << std::endl;
+                } else if(args[0] == "--all") {
+                    p_cmd = new DeleteCmd();
+                } else {
+                    try {
+                        p_cmd = new DeleteCmd(std::stoi(args[0]));
+                    } catch(...) {
+                        std::cout << args[0] << "is not a valid image id" << std::endl;
+                        throw std::exception();
+                    }
                 }
-            }
-            break;
+                break;
 
-        case SHOW:
-            p_cmd = new ShowCmd(args);
-            break;
+            case SHOW:
+                p_cmd = new ShowCmd(args);
+                break;
 
-        case SET:
-            p_cmd = new SetCmd(args);
-            break;
+            case SET:
+                p_cmd = new SetCmd(args);
+                break;
 
-        case MERGE:
-            try {
+            case MERGE:
                 p_cmd = new MergeCmd(
                     std::stoi(args[0]),
                     std::stoi(args[1]),
                     std::stoi(args[2]),
                     std::stoi(args[3])
-                );
-            } catch(...) {
-                std::cout << "invalid command" << std::endl;
-            }
-            break;
-        
-        case UNMERGE:
-            try {
+                    );
+                break;
+            
+            case UNMERGE:
                 p_cmd = new UnmergeCmd(std::stoi(args[0]));
-            } catch(...) {
-                std::cout << "invalid command" << std::endl;
-            }
-            break;
+                break;
 
-        case PLACE:
-            try {
+            case PLACE:
                 if(args.size() == 2) {
                     p_cmd = new PlaceCmd(std::stoi(args[0]), std::stoi(args[1]));
                 } else if(args.size() == 3) {
@@ -222,13 +213,9 @@ int CLI::run() {
                 } else {
                     throw std::exception();
                 }
-            } catch(...) {
-                std::cout << "invalid command" << std::endl;
-            }
-            break;
+                break;
 
-        case REMOVE:
-            try {
+            case REMOVE:
                 if(args.size() == 1) {
                     p_cmd = new RemoveCmd(std::stoi(args[0]));
                 } else if(args.size() == 2) {
@@ -236,29 +223,21 @@ int CLI::run() {
                 } else {
                     throw std::exception();
                 }
-            } catch(...) {
-                std::cout << "invalid command" << std::endl;
-            }
-            break;
+                break;
 
-        case GENERATE:
-            p_cmd = new GenerateCmd();
-            break;
+            case GENERATE:
+                p_cmd = new GenerateCmd();
+                break;
 
-        case EXPORT:
-            try {
+            case EXPORT:
                 if(args.size() == 2) {
                     p_cmd = new ExportCmd(std::stoi(args[0]), args[1]);
                 } else {
                     throw std::exception();
                 }
-            } catch(...) {
-                std::cout << "invalid command" << std::endl;
-            }
-            break;
+                break;
 
-        case FILL:
-            try {
+            case FILL:
                 if(args.size() == 0) {
                     p_cmd = new FillCmd();
                 } else if(args.size() == 1 && args[0] == "--hard") {
@@ -266,20 +245,20 @@ int CLI::run() {
                 } else {
                     throw std::exception();
                 }
-            } catch(...) {
-                std::cout << "invalid command" << std::endl;
+                break;
+
+            default:
+                break;
             }
-            break;
 
-        default:
-            break;
-        }
-
-        if(p_cmd != nullptr) {
-            p_cmd->execute(this);
-            delete p_cmd;
-        } else if(cmd == NONE) {
-            std::cout << "unknown command" << std::endl;
+            if(p_cmd != nullptr) {
+                p_cmd->execute(this);
+                delete p_cmd;
+            } else if(cmd == NONE) {
+                std::cout << "unknown command" << std::endl;
+            }
+        } catch(...) {
+            std::cout << "invalid command" << std::endl;
         }
     }
 

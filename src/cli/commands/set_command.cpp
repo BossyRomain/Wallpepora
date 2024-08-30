@@ -3,8 +3,7 @@
 #include <regex>
 
 // Constructors
-SetCmd::SetCmd(std::vector<std::string> args): m_args(args) {
-}
+SetCmd::SetCmd(std::vector<std::string> args): m_args(args) {}
 
 // Destructor
 
@@ -14,6 +13,9 @@ SetCmd::SetCmd(std::vector<std::string> args): m_args(args) {
 
 // Instance's method
 void SetCmd::execute(CLI *p_cli) {
+    assert(p_cli != nullptr);
+    assert(p_cli->getGridController() != nullptr);
+
     try {
         if(m_args.empty()) {
             throw std::exception();
@@ -59,6 +61,8 @@ void SetCmd::execute(CLI *p_cli) {
 }
 
 void SetCmd::updateRows(GridController *p_gridController, int rows) const {
+    assert(p_gridController != nullptr);
+
     if(p_gridController->setRowsCount(rows)) {
         std::cout << "grid's number of rows updated" << std::endl;
     } else {
@@ -67,6 +71,8 @@ void SetCmd::updateRows(GridController *p_gridController, int rows) const {
 }
 
 void SetCmd::updateCols(GridController *p_gridController, int cols) const {
+    assert(p_gridController != nullptr);
+
     if(p_gridController->setColsCount(cols)) {
         std::cout << "grid's number of columns updated" << std::endl;
     } else {
@@ -75,6 +81,8 @@ void SetCmd::updateCols(GridController *p_gridController, int cols) const {
 }
 
 void SetCmd::updateSize(GridController *p_gridController, int size) const {
+    assert(p_gridController != nullptr);
+    
     if(p_gridController->setCellsSize(size)) {
         std::cout << "grid's cells' size updated" << std::endl;
     } else {
