@@ -48,6 +48,11 @@
                         <tooltip>Zoom out</tooltip>
                     </object>
                     <object class="separator"/>
+                    <object class="tool" name="remove_images_btn">
+                        <bitmap default_size="32,32">../icons/trash_red.svg</bitmap>
+                        <tooltip>Remove all the images on the grid</tooltip>
+                    </object>
+
                     <object class="tool" name="reset_grid_btn">
                         <bitmap default_size="32,32">../icons/reset.svg</bitmap>
                         <tooltip>Reset the grid to its default settings</tooltip>

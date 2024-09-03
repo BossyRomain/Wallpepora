@@ -112,6 +112,11 @@ private:
     void onFillHard(wxCommandEvent& event);
 
     /**
+     * Invoked when the user clicks on the button to remove all the images on the grid.
+     */
+    void onRemoveImages(wxCommandEvent& event);
+
+    /**
      * Invoked when the user clicks on the button to reset the grid.
      */
     void onResetGrid(wxCommandEvent& event);

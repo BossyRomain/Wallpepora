@@ -143,6 +143,7 @@ void GridEditorPanel::Init() {
     p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::onZoomOut, this, XRCID("zoom_out_btn"));
     p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::onFillSoft, this, XRCID("fill_soft_btn"));
     p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::onFillHard, this, XRCID("fill_hard_btn"));
+    p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::onRemoveImages, this, XRCID("remove_images_btn"));
     p_toolbar->Bind(wxEVT_TOOL, &GridEditorPanel::onResetGrid, this, XRCID("reset_grid_btn"));
 
     wxButton *p_generateBtn = XRCCTRL(*this, "generate_btn", wxButton);
@@ -255,6 +256,15 @@ void GridEditorPanel::onFillSoft(wxCommandEvent& event) {
 
 void GridEditorPanel::onFillHard(wxCommandEvent& event)  {
     m_gridController->fill(m_imagesController->getImages(), true);
+}
+
+void GridEditorPanel::onRemoveImages(wxCommandEvent& event) {
+    wxMessageDialog dg(this, "This action will remove all the images on the grid and can't be canceled. Are you sure ?", "", wxYES_NO|wxNO_DEFAULT);
+    if(dg.ShowModal() == wxID_YES) {
+        for(Tile tile: m_gridController->getTiles()) {
+            m_gridController->placeImage(tile.getId(), nullptr);
+        }
+    }
 }
 
 void GridEditorPanel::onResetGrid(wxCommandEvent& event) {
