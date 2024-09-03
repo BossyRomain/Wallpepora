@@ -4,7 +4,7 @@
 #include "cli/commands/command.hpp"
 
 /**
- * This command removes an image with one of the following methods :
+ * This command removes all images on the grid or an image with one of the following methods :
  * - from a cell using its coordinates.
  * - from a tile using its id.
  * - from a tile using the coordinates of one the cell contained in the targeted tile.
@@ -13,6 +13,11 @@ class RemoveCmd: public Command {
 public:
 
     // Constructors
+    /**
+     * Constructs a remove command that will remove all the images on the grid.
+     */
+    RemoveCmd();
+
     /**
      * Constructs a remove command that will remove the image in a tile using its id.
      */
@@ -34,6 +39,8 @@ public:
     void execute(CLI *p_cli) override;
 
 private:
+
+    bool m_removeAll;
 
     bool m_useTileId;
 
