@@ -5,8 +5,8 @@
 #include "gui/grid_editor_panel.hpp"
 #include "gui/wallpapers_panel.hpp"
 
-GUIApp::GUIApp(ImagesController *p_imagesController, GridController *p_gridController, WallpapersController *p_wallpapersController, WorkspaceController *p_workspaceController): 
-m_imagesController(p_imagesController), m_gridController(p_gridController), m_wallpapersController(p_wallpapersController), m_workspaceController(p_workspaceController) {
+GUIApp::GUIApp(const std::string& resFolderPath, ImagesController *p_imagesController, GridController *p_gridController, WallpapersController *p_wallpapersController, WorkspaceController *p_workspaceController): 
+m_resFolderPath(resFolderPath), m_imagesController(p_imagesController), m_gridController(p_gridController), m_wallpapersController(p_wallpapersController), m_workspaceController(p_workspaceController) {
 }
 
 bool GUIApp::OnInit() {
@@ -22,7 +22,7 @@ bool GUIApp::OnInit() {
     wxXmlResource::Get()->AddHandler(new GridEditorPanelXmlHandler);
     wxXmlResource::Get()->AddHandler(new GridPainterXmlHandler);
 
-    wxXmlResource::Get()->LoadAllFiles("./res/ui/");
+    wxXmlResource::Get()->LoadAllFiles(m_resFolderPath + "/ui");
 
     MainFrame *p_mainFrame = new MainFrame();
     p_mainFrame->setWorkspaceController(m_workspaceController);

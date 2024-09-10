@@ -15,7 +15,7 @@ class GUIApp: public wxApp {
 public:
 
     // Constructors
-    GUIApp(ImagesController *p_imagesController, GridController *p_gridController, 
+    GUIApp(const std::string& resFolderPath, ImagesController *p_imagesController, GridController *p_gridController, 
     WallpapersController *p_wallpapersController, WorkspaceController *p_workspaceController);
 
     // Destructor
@@ -28,6 +28,8 @@ public:
     bool OnInit() override;
 
 private:
+
+    const std::string m_resFolderPath;
 
     ImagesController *m_imagesController;
 

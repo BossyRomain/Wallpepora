@@ -39,7 +39,10 @@ int main(int argc, char* argv[]) {
         cli.run();
     } else {
         // Launching the application with the gui
-        wxApp::SetInstance(new GUIApp(p_imagesController, p_gridController, p_wallpapersController, p_workspaceController));
+        std::string execPath(argv[0]);
+        std::string resFolderPath = execPath.substr(0, execPath.find_last_of("/")) + "/res";
+
+        wxApp::SetInstance(new GUIApp(resFolderPath, p_imagesController, p_gridController, p_wallpapersController, p_workspaceController));
         wxEntryStart(argc, argv);
 
         // Check if wxApp initialized successfully
