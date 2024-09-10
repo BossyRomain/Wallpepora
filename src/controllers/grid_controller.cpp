@@ -219,6 +219,10 @@ void GridController::removeGridListener(GridListener *p_gridListener) {
 }
 
 int GridController::merge(int rowMin, int colMin, int rowMax, int colMax) {
+    if(rowMin < 0 || colMin < 0 || rowMax >= m_rows || colMax >= m_cols || rowMin > rowMax || colMin > colMax) {
+        return -1;
+    }
+
     Tile tile(0, rowMin, colMin, rowMax, colMax);
 
     int i = 0;

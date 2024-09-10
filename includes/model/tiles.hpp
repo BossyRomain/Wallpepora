@@ -29,7 +29,7 @@ public:
 
     int getColMax() const;
 
-    int getWitdh() const;
+    int getWidth() const;
 
     int getHeight() const;
 

@@ -34,7 +34,7 @@ int Tile::getColMax() const {
     return m_colMax;
 }
 
-int Tile::getWitdh() const {
+int Tile::getWidth() const {
     return m_colMax - m_colMin + 1;
 }
 
@@ -43,7 +43,7 @@ int Tile::getHeight() const {
 }
 
 int Tile::getNbCells() const {
-    return getWitdh() * getHeight();
+    return getWidth() * getHeight();
 }
 
 Image* Tile::getImage() const {

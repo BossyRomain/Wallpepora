@@ -128,7 +128,7 @@ void GridPainter::onCellsSizeUpdated(int size) {
 
     std::vector<Tile> tiles = m_gridController->getTiles();
     for(Tile tile: tiles) {
-        int width = tile.getWitdh() * cellsSize;
+        int width = tile.getWidth() * cellsSize;
         int height = tile.getHeight() * cellsSize;
         int x = tile.getColMin() * cellsSize;
         int y = tile.getRowMin() * cellsSize;
@@ -158,7 +158,7 @@ void GridPainter::onTileCreated(const Tile *p_tile) {
     wxMemoryDC dc(m_bmp);
     int x = p_tile->getColMin() * cellsSize;
     int y = p_tile->getRowMin() * cellsSize;
-    int width = p_tile->getWitdh() * cellsSize;
+    int width = p_tile->getWidth() * cellsSize;
     int height = p_tile->getHeight() * cellsSize;
 
     dc.DrawBitmap(getEmptyBmp(width, height), x, y);
@@ -170,7 +170,7 @@ void GridPainter::onTileResized(const Tile *p_tile) {
     wxMemoryDC dc(m_bmp);
     int x = p_tile->getColMin() * cellsSize;
     int y = p_tile->getRowMin() * cellsSize;
-    int width = p_tile->getWitdh() * cellsSize;
+    int width = p_tile->getWidth() * cellsSize;
     int height = p_tile->getHeight() * cellsSize;
 
     wxBitmap bmp;
@@ -191,7 +191,7 @@ void GridPainter::onTileDeleted(Tile tile) {
 
     wxBitmap emptyCellBmp = getEmptyBmp(cellsSize, cellsSize);
     for(int r = 0; r < tile.getHeight(); r++) {
-        for(int c = 0; c < tile.getWitdh(); c++) {
+        for(int c = 0; c < tile.getWidth(); c++) {
             dc.DrawBitmap(emptyCellBmp, x + c * cellsSize, y + r * cellsSize);
         }
     }
@@ -203,7 +203,7 @@ void GridPainter::onImagePlaced(const Tile *p_tile, const Image *p_image) {
     wxMemoryDC dc(m_bmp);
     int x = p_tile->getColMin() * cellsSize;
     int y = p_tile->getRowMin() * cellsSize;
-    int width = p_tile->getWitdh() * cellsSize;
+    int width = p_tile->getWidth() * cellsSize;
     int height = p_tile->getHeight() * cellsSize;
 
     wxBitmap bmp;
