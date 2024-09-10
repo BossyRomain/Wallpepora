@@ -1,3 +1,9 @@
+<img src="./wallpepora_logo.png">
+
+![GitHub top language](https://img.shields.io/github/languages/top/BossyRomain/Wallpepora)
+![GitHub License](https://img.shields.io/github/license/BossyRomain/Wallpepora)
+![GitHub Repo stars](https://img.shields.io/github/stars/BossyRomain/Wallpepora)
+
 # Wallpepora
 Wallpepora is a C++ desktop application to make grid squares collages of images creation easier. It works on Linux OS but if you want it to works on
 others OS you need to compile it yourself.
@@ -71,3 +77,4 @@ remove tileId | Removes the image contained in a tile |
 |fill --hard | Fills the cells and tiles with images randomly, even the ones which already contain an image |
 |generate | Generates a new wallpaper if possible |
 |export id filepath | Exports a wallpaper using its id |
+|reset | Resets the grid (removes the tiles and the images) |
